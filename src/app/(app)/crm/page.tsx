@@ -11,7 +11,7 @@ export default async function PaginaCrm() {
   const { oficinaId } = await exigirSessao();
 
   // Ganho/perdido antigo sai do quadro: o funil serve para o que ainda pode
-  // virar dinheiro. O historico continua no banco.
+  // virar dinheiro. O histórico continua no banco.
   const limite = new Date();
   limite.setDate(limite.getDate() - 30);
 
@@ -26,8 +26,10 @@ export default async function PaginaCrm() {
     orderBy: [{ proximoContatoEm: "asc" }, { criadoEm: "desc" }],
   });
 
-  const hoje = new Date();
-  hoje.setHours(23, 59, 59, 999);
+  // Atraso é só o que ficou para trás: um contato marcado para hoje ainda
+  // pode ser feito hoje, então não aparece em vermelho.
+  const inicioDeHoje = new Date();
+  inicioDeHoje.setHours(0, 0, 0, 0);
 
   const cartoes: CartaoCrm[] = oportunidades.map((o) => ({
     id: o.id,
@@ -37,7 +39,7 @@ export default async function PaginaCrm() {
     etapa: o.etapa,
     valorEstimadoCentavos: o.valorEstimadoCentavos,
     proximoContatoEm: o.proximoContatoEm ? data(o.proximoContatoEm) : null,
-    atrasado: o.proximoContatoEm !== null && o.proximoContatoEm < hoje,
+    atrasado: o.proximoContatoEm !== null && o.proximoContatoEm < inicioDeHoje,
     observacoes: o.observacoes,
   }));
 
@@ -53,7 +55,7 @@ export default async function PaginaCrm() {
         descricao={
           emAberto.length > 0
             ? `${emAberto.length} contato(s) em aberto, somando ${moeda(potencial)} em potencial.`
-            : "Acompanhe quem pediu preco e ainda nao fechou."
+            : "Acompanhe quem pediu preço e ainda não fechou."
         }
       />
 
@@ -65,7 +67,7 @@ export default async function PaginaCrm() {
         <Cartao>
           <Vazio
             titulo="Nenhum contato no funil"
-            descricao="Anote aqui quem ligou pedindo preco, quem veio pelo Instagram, quem prometeu voltar. Sem isso, essas pessoas somem."
+            descricao="Anote aqui quem ligou pedindo preço, quem veio pelo Instagram, quem prometeu voltar. Sem isso, essas pessoas somem."
           />
         </Cartao>
       ) : (

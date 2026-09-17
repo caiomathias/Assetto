@@ -1,8 +1,8 @@
 import type { SVGProps } from "react";
 
 /**
- * Icones em SVG inline. Evita uma dependencia externa so para desenhar
- * nove simbolos, e o traco grosso (1.8) le melhor em monitor de oficina.
+ * Ícones em SVG inline. Evita uma dependência externa só para desenhar
+ * nove símbolos, é o traco grosso (1.8) le melhor em monitor de oficina.
  */
 function Base(props: SVGProps<SVGSVGElement>) {
   return (

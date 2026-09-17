@@ -14,7 +14,7 @@ import { exigirSessao } from "@/lib/auth";
 import { moeda, moedaSimples } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Servicos - Assetto" };
+export const metadata = { title: "Serviços - Assetto" };
 
 export default async function PaginaServicos({
   searchParams,
@@ -34,8 +34,8 @@ export default async function PaginaServicos({
   return (
     <>
       <Cabecalho
-        titulo="Servicos"
-        descricao="A mao de obra que a oficina cobra. Aparece pronta no orcamento."
+        titulo="Serviços"
+        descricao="A mão de obra que a oficina cobra. Aparece pronta no orçamento."
       />
 
       <AbasPecas atual="servicos" />
@@ -45,8 +45,8 @@ export default async function PaginaServicos({
           <Cartao>
             {servicos.length === 0 ? (
               <Vazio
-                titulo="Nenhum servico cadastrado"
-                descricao="Cadastre os servicos mais comuns (troca de oleo, alinhamento, revisao) para nao ter que digitar toda vez."
+                titulo="Nenhum serviço cadastrado"
+                descricao="Cadastre os serviços mais comuns (troca de óleo, alinhamento, revisão) para não ter que digitar toda vez."
               />
             ) : (
               <ul className="divide-y divide-slate-200">
@@ -90,26 +90,26 @@ export default async function PaginaServicos({
 
         <div>
           <Cartao>
-            <CartaoTitulo>{emEdicao ? "Editar servico" : "Novo servico"}</CartaoTitulo>
+            <CartaoTitulo>{emEdicao ? "Editar serviço" : "Novo serviço"}</CartaoTitulo>
             <div className="p-5">
               <Formulario acao={salvarServico} className="space-y-4">
                 {emEdicao && <input type="hidden" name="id" value={emEdicao.id} />}
 
-                <Campo rotulo="Nome do servico" obrigatorio>
+                <Campo rotulo="Nome do serviço" obrigatorio>
                   <Entrada
                     name="nome"
                     defaultValue={emEdicao?.nome}
                     required
-                    placeholder="Troca de oleo e filtro"
+                    placeholder="Troca de óleo e filtro"
                     key={emEdicao?.id ?? "novo"}
                   />
                 </Campo>
 
-                <Campo rotulo="Descricao (opcional)">
+                <Campo rotulo="Descrição (opcional)">
                   <Entrada name="descricao" defaultValue={emEdicao?.descricao ?? ""} />
                 </Campo>
 
-                <Campo rotulo="Preco (R$)" obrigatorio>
+                <Campo rotulo="Preço (R$)" obrigatorio>
                   <Entrada
                     name="preco"
                     inputMode="decimal"
@@ -129,7 +129,7 @@ export default async function PaginaServicos({
 
                 <div className="flex flex-wrap gap-2">
                   <BotaoSalvar tamanho="normal">
-                    {emEdicao ? "Salvar" : "Adicionar servico"}
+                    {emEdicao ? "Salvar" : "Adicionar serviço"}
                   </BotaoSalvar>
                   {emEdicao && (
                     <BotaoLink href="/pecas/servicos" variante="secundario">

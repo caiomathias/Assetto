@@ -54,7 +54,7 @@ export function FormularioOS({
       />
 
       <Cartao>
-        <CartaoTitulo>Entrada do veiculo</CartaoTitulo>
+        <CartaoTitulo>Entrada do veículo</CartaoTitulo>
         <div className="grid gap-5 p-5 sm:grid-cols-3">
           <Campo
             rotulo="Problema relatado pelo cliente"
@@ -78,11 +78,11 @@ export function FormularioOS({
             />
           </Campo>
 
-          <Campo rotulo="Previsao de entrega">
+          <Campo rotulo="Previsão de entrega">
             <Entrada name="previsaoEntrega" type="date" defaultValue={ordem?.previsaoEntrega ?? ""} />
           </Campo>
 
-          <Campo rotulo="Mecanico responsavel">
+          <Campo rotulo="Mecânico responsável">
             <Selecao name="responsavelId" defaultValue={ordem?.responsavelId ?? ""}>
               <option value="">Definir depois</option>
               {mecanicos.map((m) => (
@@ -94,8 +94,8 @@ export function FormularioOS({
           </Campo>
 
           <Campo
-            rotulo="Diagnostico da oficina"
-            ajuda="O que o mecanico encontrou. Fica na via impressa."
+            rotulo="Diagnóstico da oficina"
+            ajuda="O que o mecânico encontrou. Fica na via impressa."
             className="sm:col-span-3"
           >
             <AreaTexto
@@ -114,16 +114,16 @@ export function FormularioOS({
       />
 
       <Cartao>
-        <CartaoTitulo>Observacoes</CartaoTitulo>
+        <CartaoTitulo>Observações</CartaoTitulo>
         <div className="p-5">
-          <Campo rotulo="Observacoes internas">
+          <Campo rotulo="Observações internas">
             <AreaTexto name="observacoes" defaultValue={ordem?.observacoes ?? ""} />
           </Campo>
         </div>
       </Cartao>
 
       <div className="flex flex-wrap gap-3">
-        <BotaoSalvar>{ordem ? "Salvar alteracoes" : "Abrir ordem de servico"}</BotaoSalvar>
+        <BotaoSalvar>{ordem ? "Salvar alterações" : "Abrir ordem de serviço"}</BotaoSalvar>
         <BotaoLink
           href={ordem ? `/os/${ordem.id}` : "/patio"}
           variante="secundario"

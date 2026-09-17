@@ -49,7 +49,7 @@ export default async function PaginaClientes({
     <>
       <Cabecalho
         titulo="Clientes"
-        descricao="Todo mundo que ja passou pela oficina."
+        descricao="Todo mundo que já passou pela oficina."
         acao={
           <BotaoLink href="/clientes/novo">
             <Icone.mais className="h-5 w-5" />
@@ -69,7 +69,7 @@ export default async function PaginaClientes({
             descricao={
               termo
                 ? `Nada com "${termo}". Tente outro nome, telefone ou placa.`
-                : "Cadastre o primeiro cliente para comecar a fazer orcamentos."
+                : "Cadastre o primeiro cliente para começar a fazer orçamentos."
             }
             acao={<BotaoLink href="/clientes/novo">Cadastrar cliente</BotaoLink>}
           />

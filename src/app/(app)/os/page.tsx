@@ -9,12 +9,12 @@ import { prisma } from "@/lib/prisma";
 import { STATUS_OS } from "@/lib/rotulos";
 import type { StatusOS } from "@prisma/client";
 
-export const metadata = { title: "Ordens de servico - Assetto" };
+export const metadata = { title: "Ordens de serviço - Assetto" };
 
 const FILTROS = [
   { valor: "", titulo: "Todas" },
-  { valor: "EM_EXECUCAO", titulo: "Em execucao" },
-  { valor: "AGUARDANDO_PECA", titulo: "Aguardando peca" },
+  { valor: "EM_EXECUCAO", titulo: "Em execução" },
+  { valor: "AGUARDANDO_PECA", titulo: "Aguardando peça" },
   { valor: "PRONTO", titulo: "Prontas" },
   { valor: "ENTREGUE", titulo: "Entregues" },
   { valor: "CANCELADO", titulo: "Canceladas" },
@@ -53,12 +53,12 @@ export default async function PaginaOrdens({
   return (
     <>
       <Cabecalho
-        titulo="Ordens de servico"
-        descricao="Historico completo. Para o dia a dia, use o Patio."
+        titulo="Ordens de serviço"
+        descricao="Histórico completo. Para o dia a dia, use o Pátio."
         acao={
           <>
             <BotaoLink href="/patio" variante="secundario">
-              Ver patio
+              Ver pátio
             </BotaoLink>
             <BotaoLink href="/os/nova">
               <Icone.mais className="h-5 w-5" />
@@ -69,7 +69,7 @@ export default async function PaginaOrdens({
       />
 
       <div className="mb-4">
-        <Busca acao="/os" valor={termo} placeholder="Numero, cliente ou placa" />
+        <Busca acao="/os" valor={termo} placeholder="Número, cliente ou placa" />
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -92,9 +92,9 @@ export default async function PaginaOrdens({
       <Cartao>
         {ordens.length === 0 ? (
           <Vazio
-            titulo="Nenhuma ordem de servico"
+            titulo="Nenhuma ordem de serviço"
             descricao="Abra uma OS quando o carro entrar na oficina."
-            acao={<BotaoLink href="/os/nova">Nova ordem de servico</BotaoLink>}
+            acao={<BotaoLink href="/os/nova">Nova ordem de serviço</BotaoLink>}
           />
         ) : (
           <ul className="divide-y divide-slate-200">

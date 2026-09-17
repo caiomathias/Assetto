@@ -12,7 +12,7 @@ import { prisma } from "@/lib/prisma";
 const lancamentoSchema = z.object({
   tipo: z.enum(["RECEITA", "DESPESA"]),
   categoria: z.string().trim().min(1, "Escolha a categoria."),
-  descricao: z.string().trim().min(2, "Descreva o lancamento."),
+  descricao: z.string().trim().min(2, "Descreva o lançamento."),
   formaPagamento: z
     .enum(["DINHEIRO", "PIX", "DEBITO", "CREDITO", "BOLETO", "TRANSFERENCIA", "OUTRO"])
     .nullable()
@@ -60,7 +60,7 @@ export async function salvarLancamento(
   return sucesso();
 }
 
-/** Marca como pago/recebido, ou desfaz se ja estava. */
+/** Marca como pago/recebido, ou desfaz se já estava. */
 export async function alternarPagamento(dados: FormData): Promise<void> {
   const { oficinaId } = await exigirSessao();
   const id = dados.get("id")?.toString();
@@ -83,7 +83,7 @@ export async function excluirLancamento(dados: FormData): Promise<void> {
   const id = dados.get("id")?.toString();
   if (!id) return;
 
-  // Lancamento vindo de OS faturada nao pode sumir por engano: o valor
+  // Lancamento vindo de OS faturada não pode sumir por engano: o valor
   // precisa bater com a OS. Para desfazer, cancela-se a OS.
   const lancamento = await prisma.lancamento.findFirst({ where: { id, oficinaId } });
   if (!lancamento || lancamento.ordemServicoId) {

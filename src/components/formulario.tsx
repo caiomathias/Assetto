@@ -14,8 +14,8 @@ type AcaoDeFormulario = (
 
 /**
  * Envolve um <form> que chama uma Server Action.
- * Cuida de tres coisas que toda tela precisa e ninguem deve reescrever:
- * mostrar o erro em portugues, desabilitar o botao enquanto salva e
+ * Cuida de três coisas que toda tela precisa e ninguém deve reescrever:
+ * mostrar o erro em portugues, desabilitar o botão enquanto salva e
  * impedir envio duplicado no clique nervoso.
  */
 export function Formulario({
@@ -56,7 +56,7 @@ export function BotaoSalvar({
   );
 }
 
-/** Botao que dispara uma action simples e pede confirmacao antes. */
+/** Botão que dispara uma action simples e pede confirmação antes. */
 export function BotaoAcao({
   children,
   confirmar,

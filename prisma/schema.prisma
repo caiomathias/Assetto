@@ -1,12 +1,12 @@
-// Assetto - Sistema de gestao para oficinas mecanicas
+// Assetto - Sistema de gestão para oficinas mecânicas
 //
-// Convencoes deste schema:
+// Convenções deste schema:
 // - Multi-tenant: toda tabela de negocio tem `oficinaId`. Nenhuma consulta pode
 //   rodar sem esse filtro (ver src/lib/tenant.ts).
 // - Dinheiro: sempre Int em CENTAVOS. Nunca Float. Evita erro de arredondamento.
-// - Quantidade: Float. Valores reais de oficina (1, 2, 0.5, 3.5 litros) sao
-//   exatos em ponto flutuante e o total volta para Int via Math.round.
-// - Nomes em portugues: o dominio e brasileiro e quem le o codigo depois
+// - Quantidade: Float. Valores reais de oficina (1, 2, 0.5, 3.5 litros) são
+//   exatos em ponto flutuante é o total volta para Int via Math.round.
+// - Nomes em portugues: o domínio e brasileiro e quem le o código depois
 //   entende o negocio sem traduzir.
 
 generator client {
@@ -96,7 +96,7 @@ model Sessao {
   @@index([usuarioId])
 }
 
-/// Numeracao sequencial por oficina (OS 001, Orcamento 001...).
+/// Numeração sequencial por oficina (OS 001, Orçamento 001...).
 model Sequencia {
   id        String        @id @default(cuid())
   oficinaId String
@@ -114,7 +114,7 @@ enum TipoSequencia {
 }
 
 // ---------------------------------------------------------------------------
-// Clientes e veiculos
+// Clientes e veículos
 // ---------------------------------------------------------------------------
 
 model Cliente {
@@ -190,7 +190,7 @@ enum Combustivel {
 }
 
 // ---------------------------------------------------------------------------
-// Orcamento
+// Orçamento
 // ---------------------------------------------------------------------------
 
 model Orcamento {
@@ -200,7 +200,7 @@ model Orcamento {
   clienteId         String
   veiculoId         String
   status            StatusOrcamento @default(RASCUNHO)
-  /// Token do link publico que o cliente abre para aprovar pelo celular.
+  /// Token do link público que o cliente abre para aprovar pelo celular.
   tokenPublico      String          @unique @default(cuid())
   validadeAte       DateTime?
   kmAtual           Int?
@@ -261,7 +261,7 @@ enum TipoItem {
 }
 
 // ---------------------------------------------------------------------------
-// Ordem de servico e patio (kanban)
+// Ordem de serviço e pátio (kanban)
 // ---------------------------------------------------------------------------
 
 model OrdemServico {
@@ -280,7 +280,7 @@ model OrdemServico {
   observacoes       String?
   descontoCentavos  Int       @default(0)
   totalCentavos     Int       @default(0)
-  /// Marca que o estoque ja foi baixado, para nao debitar duas vezes.
+  /// Marca que o estoque já foi baixado, para não debitar duas vezes.
   estoqueBaixado    Boolean   @default(false)
   iniciadoEm        DateTime?
   finalizadoEm      DateTime?
@@ -301,7 +301,7 @@ model OrdemServico {
   @@index([oficinaId, status])
 }
 
-/// Colunas do kanban do patio, nesta ordem.
+/// Colunas do kanban do pátio, nesta ordem.
 enum StatusOS {
   RECEBIDO
   AGUARDANDO_APROVACAO
@@ -332,7 +332,7 @@ model ItemOS {
 }
 
 // ---------------------------------------------------------------------------
-// Pecas e servicos
+// Peças e serviços
 // ---------------------------------------------------------------------------
 
 model Peca {
@@ -382,7 +382,7 @@ model MovimentoEstoque {
   pecaId         String
   tipo           TipoMovimento
   quantidade     Float
-  /// Saldo da peca depois do movimento, para auditoria.
+  /// Saldo da peça depois do movimento, para auditoria.
   saldoDepois    Float
   motivo         String?
   ordemServicoId String?

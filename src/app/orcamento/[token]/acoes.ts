@@ -6,11 +6,11 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Resposta do cliente pelo link publico. Roda sem login: a unica credencial
- * e o token do orcamento, que so quem recebeu o link conhece.
+ * Resposta do cliente pelo link público. Roda sem login: a única credencial
+ * é o token do orçamento, que só quem recebeu o link conhece.
  *
- * Por isso a acao e deliberadamente estreita - ela consegue mudar apenas o
- * status de um orcamento que esta em ENVIADO, e nada mais.
+ * Por isso a ação é deliberadamente estreita - ela consegue mudar apenas o
+ * status de um orçamento que está em ENVIADO, e nada mais.
  */
 export async function responderOrcamento(dados: FormData): Promise<void> {
   const token = dados.get("token")?.toString();

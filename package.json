@@ -2,7 +2,7 @@
   "name": "assetto",
   "version": "0.1.0",
   "private": true,
-  "description": "Sistema de gestao para oficinas mecanicas",
+  "description": "Sistema de gestão para oficinas mecânicas",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -14,7 +14,8 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "setup": "prisma generate && prisma db push && npm run db:seed",
-    "teste:fumaca": "node testes/fumaca.mjs"
+    "teste:fumaca": "node testes/fumaca.mjs",
+    "teste:acentos": "node testes/acentos.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -11,7 +11,7 @@ import { FORMA_PAGAMENTO } from "@/lib/rotulos";
 
 export const metadata = { title: "Financeiro - Assetto" };
 
-/** "2026-03" -> primeiro e ultimo instante do mes, no fuso local. */
+/** "2026-03" -> primeiro e último instante do mês, no fuso local. */
 function faixaDoMes(referencia: string | undefined) {
   const hoje = new Date();
   const [ano, mes] = (referencia ?? "").split("-").map(Number);
@@ -79,8 +79,8 @@ export default async function PaginaFinanceiro({
       include: { cliente: true, ordemServico: true },
       orderBy: [{ vencimento: "asc" }, { criadoEm: "asc" }],
     }),
-    // Em aberto de qualquer mes: uma conta atrasada de janeiro precisa
-    // aparecer mesmo quando a tela esta mostrando marco.
+    // Em aberto de qualquer mês: uma conta atrasada de janeiro precisa
+    // aparecer mesmo quando a tela está mostrando marco.
     prisma.lancamento.findMany({
       where: { oficinaId, pagoEm: null },
       select: { tipo: true, valorCentavos: true, vencimento: true },
@@ -100,14 +100,14 @@ export default async function PaginaFinanceiro({
     <>
       <Cabecalho
         titulo="Financeiro"
-        descricao="O que entrou, o que saiu e o que ainda esta para acontecer."
+        descricao="O que entrou, o que saiu e o que ainda está para acontecer."
       />
 
       {erro === "vinculado" && (
         <div className="mb-5">
           <Aviso tom="vermelho">
-            Este lancamento veio de uma OS faturada e nao pode ser excluido aqui. Para desfazer,
-            cancele a ordem de servico.
+            Este lancamento veio de uma OS faturada e não pode ser excluido aqui. Para desfazer,
+            cancele a ordem de serviço.
           </Aviso>
         </div>
       )}
@@ -118,43 +118,45 @@ export default async function PaginaFinanceiro({
             href={`/financeiro?mes=${periodo.chaveAnterior}`}
             className="flex min-h-11 items-center rounded-lg bg-white px-4 font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50"
           >
-            Mes anterior
+            Mês anterior
           </Link>
-          <span className="px-2 text-lg font-bold text-slate-900 capitalize">{periodo.titulo}</span>
+          <span className="px-2 text-lg font-bold text-slate-900 first-letter:uppercase">
+            {periodo.titulo}
+          </span>
           <Link
             href={`/financeiro?mes=${periodo.chaveProximo}`}
             className="flex min-h-11 items-center rounded-lg bg-white px-4 font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50"
           >
-            Proximo mes
+            Próximo mês
           </Link>
         </div>
       </div>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Indicador titulo="Entrou no mes" valor={moeda(recebido)} tom="verde" />
-        <Indicador titulo="Saiu no mes" valor={moeda(pago)} tom="vermelho" />
+        <Indicador titulo="Entrou no mês" valor={moeda(recebido)} tom="verde" />
+        <Indicador titulo="Saiu no mês" valor={moeda(pago)} tom="vermelho" />
         <Indicador
-          titulo="Saldo do mes"
+          titulo="Saldo do mês"
           valor={moeda(recebido - pago)}
           tom={recebido - pago >= 0 ? "verde" : "vermelho"}
         />
         <Indicador
-          titulo="Em aberto"
-          valor={`${moeda(aReceber)} a receber`}
+          titulo="A receber em aberto"
+          valor={moeda(aReceber)}
           tom="amarelo"
-          detalhe={`${moeda(aPagar)} a pagar${vencidos.length > 0 ? ` - ${vencidos.length} vencido(s)` : ""}`}
+          detalhe={`${moeda(aPagar)} a pagar${vencidos.length > 0 ? ` · ${vencidos.length} vencido(s)` : ""}`}
         />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Cartao>
-            <CartaoTitulo>Lancamentos de {periodo.titulo}</CartaoTitulo>
+            <CartaoTitulo>Lançamentos de {periodo.titulo}</CartaoTitulo>
 
             {lancamentos.length === 0 ? (
               <Vazio
-                titulo="Nenhum lancamento neste mes"
-                descricao="Ao faturar uma OS o valor entra aqui automaticamente. Contas e vendas avulsas voce lanca ao lado."
+                titulo="Nenhum lançamento neste mês"
+                descricao="Ao faturar uma OS o valor entra aqui automaticamente. Contas e vendas avulsas você lança ao lado."
               />
             ) : (
               <ul className="divide-y divide-slate-200">
@@ -236,7 +238,7 @@ export default async function PaginaFinanceiro({
 
         <div>
           <Cartao>
-            <CartaoTitulo>Lancar conta ou venda</CartaoTitulo>
+            <CartaoTitulo>Lançar conta ou venda</CartaoTitulo>
             <div className="p-5">
               <NovoLancamento />
             </div>

@@ -39,17 +39,17 @@ export function itemVazio(tipo: "PECA" | "SERVICO" = "SERVICO"): ItemEditavel {
 }
 
 /**
- * Editor de itens do orcamento / da OS.
+ * Editor de itens do orçamento / da OS.
  *
- * Decisoes de usabilidade, porque esta e a tela mais usada do sistema:
- * - O total de cada linha e o total geral aparecem enquanto digita. Ninguem
+ * Decisoes de usabilidade, porque está é a tela mais usada do sistema:
+ * - O total de cada linha é o total geral aparecem enquanto digita. Ninguém
  *   precisa somar de cabeca nem esperar salvar para conferir.
- * - Dropdown do catalogo preenche descricao e preco, mas os dois campos
- *   continuam editaveis: na oficina real, o preco muda por cliente.
- * - Da para digitar um item que nao esta no catalogo, sem cadastrar nada.
- * - Aviso visivel quando a peca escolhida nao tem saldo em estoque.
+ * - Dropdown do catalogo preenche descrição e preço, mas os dois campos
+ *   continuam editaveis: na oficina real, o preço muda por cliente.
+ * - Da para digitar um item que não está no catalogo, sem cadastrar nada.
+ * - Aviso visivel quando a peça escolhida não tem saldo em estoque.
  *
- * Os itens viajam para o servidor como JSON num unico campo escondido. O
+ * Os itens viajam para o servidor como JSON num único campo escondido. O
  * formulario continua sendo um <form> normal com Server Action.
  */
 export function EditorItens({
@@ -111,9 +111,9 @@ export function EditorItens({
 
   return (
     <Cartao>
-      <CartaoTitulo>Pecas e servicos</CartaoTitulo>
+      <CartaoTitulo>Peças e serviços</CartaoTitulo>
 
-      {/* O servidor le so estes dois campos. */}
+      {/* O servidor le só estes dois campos. */}
       <input
         type="hidden"
         name="itens"
@@ -150,7 +150,7 @@ export function EditorItens({
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-slate-400">#{indice + 1}</span>
                   <Selo tom={item.tipo === "PECA" ? "azul" : "roxo"}>
-                    {item.tipo === "PECA" ? "Peca" : "Servico"}
+                    {item.tipo === "PECA" ? "Peça" : "Serviço"}
                   </Selo>
                 </div>
                 <button
@@ -176,7 +176,7 @@ export function EditorItens({
                   >
                     <option value="">Digitar manualmente</option>
                     {servicos.length > 0 && (
-                      <optgroup label="Servicos">
+                      <optgroup label="Serviços">
                         {servicos.map((s) => (
                           <option key={s.id} value={s.id}>
                             {s.nome} - {moeda(s.precoCentavos)}
@@ -185,7 +185,7 @@ export function EditorItens({
                       </optgroup>
                     )}
                     {pecas.length > 0 && (
-                      <optgroup label="Pecas">
+                      <optgroup label="Peças">
                         {pecas.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.nome} - {moeda(p.precoCentavos)}
@@ -199,13 +199,13 @@ export function EditorItens({
 
                 <label className="sm:col-span-7">
                   <span className="mb-1 block text-sm font-semibold text-slate-700">
-                    Descricao que o cliente vai ler
+                    Descrição que o cliente vai ler
                   </span>
                   <input
                     value={item.descricao}
                     onChange={(e) => alterar(item.chave, { descricao: e.target.value })}
                     placeholder={
-                      item.tipo === "PECA" ? "Ex: Pastilha de freio dianteira" : "Ex: Troca de oleo"
+                      item.tipo === "PECA" ? "Ex: Pastilha de freio dianteira" : "Ex: Troca de óleo"
                     }
                     className="w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-base"
                   />
@@ -246,7 +246,7 @@ export function EditorItens({
               {semEstoque && (
                 <p className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-orange-700">
                   <Icone.alerta className="h-4 w-4" />
-                  Estoque atual: {peca.estoque}. Vai faltar peca para atender esta quantidade.
+                  Estoque atual: {peca.estoque}. Vai faltar peça para atender esta quantidade.
                 </p>
               )}
             </div>
@@ -256,11 +256,11 @@ export function EditorItens({
         <div className="flex flex-wrap gap-2">
           <Botao type="button" variante="secundario" onClick={() => adicionar("SERVICO")}>
             <Icone.mais className="h-5 w-5" />
-            Adicionar servico
+            Adicionar serviço
           </Botao>
           <Botao type="button" variante="secundario" onClick={() => adicionar("PECA")}>
             <Icone.mais className="h-5 w-5" />
-            Adicionar peca
+            Adicionar peça
           </Botao>
         </div>
       </div>

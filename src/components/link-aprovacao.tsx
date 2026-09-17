@@ -6,8 +6,8 @@ import { Icone } from "@/components/icones";
 import { Botao } from "@/components/ui";
 
 /**
- * Link publico do orcamento. O caso de uso real e: atendente copia e cola no
- * WhatsApp do cliente. Por isso o botao de WhatsApp vem pronto com a
+ * Link público do orçamento. O caso de uso real e: atendente cópia e cola no
+ * WhatsApp do cliente. Por isso o botão de WhatsApp vem pronto com a
  * mensagem escrita.
  */
 export function LinkAprovacao({
@@ -24,9 +24,9 @@ export function LinkAprovacao({
   const [copiado, setCopiado] = useState(false);
 
   const mensagem =
-    `Ola! Aqui e da ${oficina}. ` +
-    `Segue o orcamento ${numero} do seu veiculo. ` +
-    `Voce pode aprovar ou recusar direto no link: ${url}`;
+    `Olá! Aqui e da ${oficina}. ` +
+    `Segue o orçamento ${numero} do seu veículo. ` +
+    `Você pode aprovar ou recusar direto no link: ${url}`;
 
   async function copiar() {
     try {

@@ -20,7 +20,7 @@ import { data, dataHora, moeda, placa, telefone } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { COLUNAS_PATIO, FORMA_PAGAMENTO, STATUS_OS } from "@/lib/rotulos";
 
-export const metadata = { title: "Ordem de servico - Assetto" };
+export const metadata = { title: "Ordem de serviço - Assetto" };
 
 export default async function PaginaOS({ params }: { params: Promise<{ id: string }> }) {
   const { oficinaId } = await exigirSessao();
@@ -57,7 +57,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
               </BotaoLink>
             )}
             <BotaoLink href={`/os/${ordem.id}/imprimir`} variante="secundario">
-              Ver via para impressao
+              Ver via para impressão
             </BotaoLink>
             <BotaoImprimir />
           </>
@@ -76,14 +76,14 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
 
       {ordem.status === "CANCELADO" && (
         <div className="mb-5">
-          <Aviso tom="vermelho">Esta ordem de servico foi cancelada.</Aviso>
+          <Aviso tom="vermelho">Esta ordem de serviço foi cancelada.</Aviso>
         </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Cartao>
-            <CartaoTitulo>Em que etapa esta o servico</CartaoTitulo>
+            <CartaoTitulo>Em que etapa está o serviço</CartaoTitulo>
             <div className="p-5">
               <div className="flex flex-wrap gap-2">
                 {COLUNAS_PATIO.map((status) => {
@@ -111,7 +111,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
 
           {(ordem.descricaoProblema || ordem.diagnostico) && (
             <Cartao>
-              <CartaoTitulo>Relato e diagnostico</CartaoTitulo>
+              <CartaoTitulo>Relato e diagnóstico</CartaoTitulo>
               <div className="space-y-4 p-5">
                 {ordem.descricaoProblema && (
                   <div>
@@ -130,7 +130,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
           )}
 
           <Cartao>
-            <CartaoTitulo>Pecas e servicos</CartaoTitulo>
+            <CartaoTitulo>Peças e serviços</CartaoTitulo>
             <TabelaItens
               itens={ordem.itens}
               descontoCentavos={ordem.descontoCentavos}
@@ -140,7 +140,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
 
           {ordem.observacoes && (
             <Cartao>
-              <CartaoTitulo>Observacoes internas</CartaoTitulo>
+              <CartaoTitulo>Observações internas</CartaoTitulo>
               <p className="p-5 whitespace-pre-wrap text-slate-800">{ordem.observacoes}</p>
             </Cartao>
           )}
@@ -165,12 +165,12 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
                       <p className="text-slate-700">
                         {lancamento.formaPagamento
                           ? FORMA_PAGAMENTO[lancamento.formaPagamento]
-                          : "Forma nao informada"}
+                          : "Forma não informada"}
                       </p>
                       <Selo tom={lancamento.pagoEm ? "verde" : "amarelo"}>
                         {lancamento.pagoEm
                           ? `Recebido em ${data(lancamento.pagoEm)}`
-                          : `A receber ate ${data(lancamento.vencimento)}`}
+                          : `A receber até ${data(lancamento.vencimento)}`}
                       </Selo>
                     </>
                   )}
@@ -185,7 +185,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
           )}
 
           <Cartao>
-            <CartaoTitulo>Informacoes</CartaoTitulo>
+            <CartaoTitulo>Informações</CartaoTitulo>
             <dl className="space-y-3 p-5 text-sm">
               <div>
                 <dt className="font-semibold text-slate-500">Cliente</dt>
@@ -193,9 +193,9 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
                 <dd className="text-slate-600">{telefone(ordem.cliente.telefone)}</dd>
               </div>
               <div>
-                <dt className="font-semibold text-slate-500">Mecanico responsavel</dt>
+                <dt className="font-semibold text-slate-500">Mecânico responsável</dt>
                 <dd className="text-base text-slate-900">
-                  {ordem.responsavel?.nome ?? "Nao definido"}
+                  {ordem.responsavel?.nome ?? "Não definido"}
                 </dd>
               </div>
               {ordem.kmEntrada !== null && (
@@ -212,7 +212,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
               </div>
               {ordem.finalizadoEm && (
                 <div>
-                  <dt className="font-semibold text-slate-500">Servico terminado</dt>
+                  <dt className="font-semibold text-slate-500">Serviço terminado</dt>
                   <dd className="text-base text-slate-900">{dataHora(ordem.finalizadoEm)}</dd>
                 </div>
               )}
@@ -225,7 +225,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
                       variante="secundario"
                       tamanho="pequeno"
                     >
-                      Orcamento {String(ordem.orcamento.numero).padStart(4, "0")}
+                      Orçamento {String(ordem.orcamento.numero).padStart(4, "0")}
                     </BotaoLink>
                   </dd>
                 </div>
@@ -243,7 +243,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
                   className="w-full"
                   confirmar={
                     faturada
-                      ? `Cancelar a OS ${numero}? Ela ja foi faturada, entao sera marcada como cancelada e o historico sera mantido.`
+                      ? `Cancelar a OS ${numero}? Ela já foi faturada, então será marcada como cancelada e o histórico será mantido.`
                       : `Excluir a OS ${numero}?`
                   }
                 >

@@ -9,7 +9,7 @@ import { falha, mensagemDeErro, sucesso, type Resultado } from "@/lib/erros";
 import { soDigitos } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-/** Campo de texto que, se vier vazio, deve virar null e nao string vazia. */
+/** Campo de texto que, se vier vazio, deve virar null e não string vazia. */
 const opcional = z
   .string()
   .trim()
@@ -81,7 +81,7 @@ export async function salvarCliente(
         where: { id, oficinaId },
         data: valores,
       });
-      if (r.count === 0) return falha("Cliente nao encontrado.");
+      if (r.count === 0) return falha("Cliente não encontrado.");
       clienteId = id;
     } else {
       const criado = await prisma.cliente.create({ data: { ...valores, oficinaId } });
@@ -100,7 +100,7 @@ export async function excluirCliente(dados: FormData): Promise<void> {
   const id = dados.get("id")?.toString();
   if (!id) return;
 
-  // Cliente com historico nao some: o financeiro e as OS antigas precisam
+  // Cliente com histórico não some: o financeiro e as OS antigas precisam
   // continuar mostrando de quem era o carro.
   const [orcamentos, ordens] = await Promise.all([
     prisma.orcamento.count({ where: { oficinaId, clienteId: id } }),
@@ -116,7 +116,7 @@ export async function excluirCliente(dados: FormData): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// Veiculos
+// Veículos
 // ---------------------------------------------------------------------------
 
 const veiculoSchema = z.object({
@@ -173,19 +173,19 @@ export async function salvarVeiculo(
   const id = dados.get("id")?.toString() || null;
 
   const cliente = await prisma.cliente.findFirst({ where: { id: clienteId, oficinaId } });
-  if (!cliente) return falha("Cliente nao encontrado.");
+  if (!cliente) return falha("Cliente não encontrado.");
 
   try {
     if (id) {
       const r = await prisma.veiculo.updateMany({ where: { id, oficinaId }, data: valores });
-      if (r.count === 0) return falha("Veiculo nao encontrado.");
+      if (r.count === 0) return falha("Veículo não encontrado.");
     } else {
       await prisma.veiculo.create({ data: { ...valores, clienteId, oficinaId } });
     }
   } catch (e) {
     const codigo = (e as { code?: string })?.code;
     if (codigo === "P2002") {
-      return falha(`A placa ${analise.data.placa} ja esta cadastrada nesta oficina.`);
+      return falha(`A placa ${analise.data.placa} já está cadastrada nesta oficina.`);
     }
     return falha(mensagemDeErro(e));
   }

@@ -1,4 +1,4 @@
-/** Helpers de exibicao. Tudo em pt-BR, porque o usuario final e brasileiro. */
+/** Helpers de exibição. Tudo em pt-BR, porque o usuário final e brasileiro. */
 
 /** 12345 (centavos) -> "R$ 123,45" */
 export function moeda(centavos: number): string {
@@ -14,7 +14,7 @@ export function moedaSimples(centavos: number): string {
 }
 
 /**
- * Le o que o usuario digitou num campo de dinheiro e devolve centavos.
+ * Le o que o usuário digitou num campo de dinheiro e devolve centavos.
  * Aceita "1.234,56", "1234,56", "1234.56" e "1234".
  */
 export function paraCentavos(entrada: string | number | null | undefined): number {

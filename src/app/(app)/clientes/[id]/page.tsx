@@ -22,9 +22,9 @@ export const metadata = { title: "Cliente - Assetto" };
 
 const ERROS: Record<string, string> = {
   historico:
-    "Este cliente tem orcamentos ou ordens de servico e nao pode ser excluido. O historico da oficina depende dele.",
+    "Este cliente tem orçamentos ou ordens de serviço e não pode ser excluido. O histórico da oficina depende dele.",
   "veiculo-historico":
-    "Este veiculo tem ordens de servico e nao pode ser excluido. O historico de manutencao depende dele.",
+    "Este veículo tem ordens de serviço e não pode ser excluido. O histórico de manutenção depende dele.",
 };
 
 function Linha({ rotulo, valor }: { rotulo: string; valor: React.ReactNode }) {
@@ -86,7 +86,7 @@ export default async function PaginaCliente({
           <>
             <BotaoLink href={`/orcamentos/novo?cliente=${cliente.id}`}>
               <Icone.mais className="h-5 w-5" />
-              Novo orcamento
+              Novo orçamento
             </BotaoLink>
             <BotaoLink href={`/clientes/${cliente.id}/editar`} variante="secundario">
               Editar
@@ -108,20 +108,20 @@ export default async function PaginaCliente({
               acao={
                 <BotaoLink href={`/clientes/${cliente.id}/veiculos/novo`} tamanho="pequeno">
                   <Icone.mais className="h-4 w-4" />
-                  Adicionar veiculo
+                  Adicionar veículo
                 </BotaoLink>
               }
             >
-              Veiculos
+              Veículos
             </CartaoTitulo>
 
             {cliente.veiculos.length === 0 ? (
               <Vazio
-                titulo="Nenhum veiculo cadastrado"
-                descricao="Cadastre o carro do cliente para poder abrir orcamentos e ordens de servico."
+                titulo="Nenhum veículo cadastrado"
+                descricao="Cadastre o carro do cliente para poder abrir orçamentos e ordens de serviço."
                 acao={
                   <BotaoLink href={`/clientes/${cliente.id}/veiculos/novo`}>
-                    Adicionar veiculo
+                    Adicionar veículo
                   </BotaoLink>
                 }
               />
@@ -165,7 +165,7 @@ export default async function PaginaCliente({
                         <input type="hidden" name="clienteId" value={cliente.id} />
                         <BotaoAcao
                           variante="fantasma"
-                          confirmar={`Excluir o veiculo ${placa(veiculo.placa)}?`}
+                          confirmar={`Excluir o veículo ${placa(veiculo.placa)}?`}
                         >
                           Excluir
                         </BotaoAcao>
@@ -178,9 +178,9 @@ export default async function PaginaCliente({
           </Cartao>
 
           <Cartao>
-            <CartaoTitulo>Ultimas ordens de servico</CartaoTitulo>
+            <CartaoTitulo>Últimas ordens de serviço</CartaoTitulo>
             {cliente.ordensServico.length === 0 ? (
-              <Vazio titulo="Nenhum servico feito ainda" />
+              <Vazio titulo="Nenhum serviço feito ainda" />
             ) : (
               <ul className="divide-y divide-slate-200">
                 {cliente.ordensServico.map((os) => (
@@ -209,9 +209,9 @@ export default async function PaginaCliente({
           </Cartao>
 
           <Cartao>
-            <CartaoTitulo>Ultimos orcamentos</CartaoTitulo>
+            <CartaoTitulo>Últimos orçamentos</CartaoTitulo>
             {cliente.orcamentos.length === 0 ? (
-              <Vazio titulo="Nenhum orcamento feito ainda" />
+              <Vazio titulo="Nenhum orçamento feito ainda" />
             ) : (
               <ul className="divide-y divide-slate-200">
                 {cliente.orcamentos.map((orc) => (
@@ -222,7 +222,7 @@ export default async function PaginaCliente({
                     >
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900">
-                          Orcamento {String(orc.numero).padStart(4, "0")} -{" "}
+                          Orçamento {String(orc.numero).padStart(4, "0")} -{" "}
                           {placa(orc.veiculo.placa)}
                         </p>
                         <p className="text-sm text-slate-600">{data(orc.criadoEm)}</p>
@@ -270,7 +270,7 @@ export default async function PaginaCliente({
 
           {cliente.observacoes && (
             <Cartao>
-              <CartaoTitulo>Observacoes</CartaoTitulo>
+              <CartaoTitulo>Observações</CartaoTitulo>
               <p className="p-5 whitespace-pre-wrap text-slate-800">{cliente.observacoes}</p>
             </Cartao>
           )}
@@ -283,13 +283,13 @@ export default async function PaginaCliente({
                   variante="perigo"
                   tamanho="normal"
                   className="w-full"
-                  confirmar={`Excluir o cliente ${cliente.nome}? Essa acao nao pode ser desfeita.`}
+                  confirmar={`Excluir o cliente ${cliente.nome}? Essa ação não pode ser desfeita.`}
                 >
                   Excluir cliente
                 </BotaoAcao>
               </form>
               <p className="mt-2 text-sm text-slate-500">
-                So e possivel excluir clientes que nunca tiveram orcamento ou ordem de servico.
+                Só é possível excluir clientes que nunca tiveram orçamento ou ordem de serviço.
               </p>
             </div>
           </Cartao>

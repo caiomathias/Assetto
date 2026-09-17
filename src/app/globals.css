@@ -64,14 +64,14 @@ input[type="number"] {
 }
 
 @media print {
-  .nao-imprimir {
+  .no-print {
     display: none !important;
   }
   body {
     background: #fff;
     font-size: 12px;
   }
-  .pagina-impressa {
+  .print-page {
     max-width: none;
     padding: 0;
   }

@@ -25,11 +25,11 @@ export default async function PaginaCriarConta() {
           <Entrada name="nome" required autoComplete="name" placeholder="Joao Silva" />
         </Campo>
 
-        <Campo rotulo="Seu e-mail" ajuda="Sera usado para entrar no sistema." obrigatorio>
+        <Campo rotulo="Seu e-mail" ajuda="Será usado para entrar no sistema." obrigatorio>
           <Entrada name="email" type="email" required autoComplete="email" />
         </Campo>
 
-        <Campo rotulo="Crie uma senha" ajuda="Minimo de 6 caracteres." obrigatorio>
+        <Campo rotulo="Crie uma senha" ajuda="Mínimo de 6 caracteres." obrigatorio>
           <Entrada name="senha" type="password" required autoComplete="new-password" minLength={6} />
         </Campo>
 
@@ -41,7 +41,7 @@ export default async function PaginaCriarConta() {
       </Formulario>
 
       <p className="mt-6 text-center text-slate-600">
-        Ja tem conta?{" "}
+        Já tem conta?{" "}
         <Link href="/entrar" className="font-semibold text-marca-700 underline">
           Entrar
         </Link>

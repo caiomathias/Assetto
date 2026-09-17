@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { STATUS_ORCAMENTO } from "@/lib/rotulos";
 import type { StatusOrcamento } from "@prisma/client";
 
-export const metadata = { title: "Orcamentos - Assetto" };
+export const metadata = { title: "Orçamentos - Assetto" };
 
 const FILTROS: { valor: string; titulo: string }[] = [
   { valor: "", titulo: "Todos" },
@@ -58,18 +58,18 @@ export default async function PaginaOrcamentos({
   return (
     <>
       <Cabecalho
-        titulo="Orcamentos"
-        descricao="Monte o preco, mande para o cliente e acompanhe a resposta."
+        titulo="Orçamentos"
+        descricao="Monte o preço, mande para o cliente e acompanhe a resposta."
         acao={
           <BotaoLink href="/orcamentos/novo">
             <Icone.mais className="h-5 w-5" />
-            Novo orcamento
+            Novo orçamento
           </BotaoLink>
         }
       />
 
       <div className="mb-4">
-        <Busca acao="/orcamentos" valor={termo} placeholder="Numero, cliente ou placa" />
+        <Busca acao="/orcamentos" valor={termo} placeholder="Número, cliente ou placa" />
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -92,9 +92,9 @@ export default async function PaginaOrcamentos({
       <Cartao>
         {orcamentos.length === 0 ? (
           <Vazio
-            titulo="Nenhum orcamento por aqui"
-            descricao="Crie um orcamento para enviar o preco ao cliente pelo WhatsApp."
-            acao={<BotaoLink href="/orcamentos/novo">Novo orcamento</BotaoLink>}
+            titulo="Nenhum orçamento por aqui"
+            descricao="Crie um orçamento para enviar o preço ao cliente pelo WhatsApp."
+            acao={<BotaoLink href="/orcamentos/novo">Novo orçamento</BotaoLink>}
           />
         ) : (
           <ul className="divide-y divide-slate-200">

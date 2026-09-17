@@ -10,7 +10,7 @@ import { dataHora, moeda, quantidade as formatarQtd } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { TIPO_MOVIMENTO } from "@/lib/rotulos";
 
-export const metadata = { title: "Peca - Assetto" };
+export const metadata = { title: "Peça - Assetto" };
 
 export default async function PaginaPeca({ params }: { params: Promise<{ id: string }> }) {
   const { oficinaId } = await exigirSessao();
@@ -39,13 +39,13 @@ export default async function PaginaPeca({ params }: { params: Promise<{ id: str
     <>
       <Cabecalho
         titulo={peca.nome}
-        descricao={[peca.codigo, peca.marca].filter(Boolean).join(" - ") || "Sem codigo"}
+        descricao={[peca.codigo, peca.marca].filter(Boolean).join(" - ") || "Sem código"}
       />
 
       {peca.quantidade < 0 && (
         <div className="mb-5">
           <Aviso tom="vermelho">
-            O estoque desta peca esta negativo ({formatarQtd(peca.quantidade)} {peca.unidade}).
+            O estoque desta peça está negativo ({formatarQtd(peca.quantidade)} {peca.unidade}).
             Isso acontece quando a peca foi usada numa OS sem ter sido dada entrada antes. Use
             &quot;Acertar pela contagem&quot; para corrigir.
           </Aviso>
@@ -57,7 +57,7 @@ export default async function PaginaPeca({ params }: { params: Promise<{ id: str
           <FormularioPeca peca={peca} />
 
           <Cartao>
-            <CartaoTitulo>Historico de movimentos</CartaoTitulo>
+            <CartaoTitulo>Histórico de movimentos</CartaoTitulo>
             {peca.movimentos.length === 0 ? (
               <Vazio titulo="Nenhum movimento registrado" />
             ) : (
@@ -92,7 +92,7 @@ export default async function PaginaPeca({ params }: { params: Promise<{ id: str
 
         <div className="space-y-6">
           <Cartao>
-            <CartaoTitulo>Situacao</CartaoTitulo>
+            <CartaoTitulo>Situação</CartaoTitulo>
             <dl className="space-y-3 p-5">
               <div>
                 <dt className="text-sm font-semibold text-slate-500">Em estoque</dt>
@@ -102,7 +102,7 @@ export default async function PaginaPeca({ params }: { params: Promise<{ id: str
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-semibold text-slate-500">Estoque minimo</dt>
+                <dt className="text-sm font-semibold text-slate-500">Estoque mínimo</dt>
                 <dd className="text-slate-900">
                   {formatarQtd(peca.estoqueMinimo)} {peca.unidade}
                 </dd>
@@ -144,13 +144,13 @@ export default async function PaginaPeca({ params }: { params: Promise<{ id: str
                   variante="perigo"
                   tamanho="normal"
                   className="w-full"
-                  confirmar={`Excluir a peca ${peca.nome}?`}
+                  confirmar={`Excluir a peça ${peca.nome}?`}
                 >
-                  Excluir peca
+                  Excluir peça
                 </BotaoAcao>
               </form>
               <p className="mt-2 text-sm text-slate-500">
-                Pecas ja usadas em alguma OS sao apenas desativadas, para o historico continuar
+                Peças já usadas em alguma OS são apenas desativadas, para o histórico continuar
                 correto.
               </p>
             </div>

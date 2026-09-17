@@ -3,8 +3,8 @@ import "server-only";
 import { headers } from "next/headers";
 
 /**
- * Endereco publico da aplicacao, usado nos links que vao para o cliente.
- * Prefere a variavel de ambiente; sem ela, deduz do cabecalho da requisicao
+ * Endereco público da aplicação, usado nos links que vão para o cliente.
+ * Prefere a variavel de ambiente; sem ela, deduz do cabeçalho da requisição
  * para que funcione em desenvolvimento sem configurar nada.
  */
 export async function urlDoApp(): Promise<string> {

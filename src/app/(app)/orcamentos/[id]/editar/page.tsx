@@ -7,7 +7,7 @@ import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
 import { dataInput, moedaSimples } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Editar orcamento - Assetto" };
+export const metadata = { title: "Editar orçamento - Assetto" };
 
 export default async function PaginaEditarOrcamento({
   params,
@@ -32,8 +32,8 @@ export default async function PaginaEditarOrcamento({
   return (
     <>
       <Cabecalho
-        titulo={`Editar orcamento ${String(orcamento.numero).padStart(4, "0")}`}
-        descricao="Alterar itens mantem o mesmo numero e o mesmo link do cliente."
+        titulo={`Editar orçamento ${String(orcamento.numero).padStart(4, "0")}`}
+        descricao="Alterar itens mantem o mesmo número e o mesmo link do cliente."
       />
       <FormularioOrcamento
         clientes={clientes}

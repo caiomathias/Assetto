@@ -7,7 +7,7 @@ import { exigirSessao } from "@/lib/auth";
 import { data } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Imprimir orcamento - Assetto" };
+export const metadata = { title: "Imprimir orçamento - Assetto" };
 
 export default async function PaginaImprimirOrcamento({
   params,
@@ -39,7 +39,7 @@ export default async function PaginaImprimirOrcamento({
 
   return (
     <>
-      <div className="nao-imprimir mb-5 flex flex-wrap gap-3">
+      <div className="no-print mb-5 flex flex-wrap gap-3">
         <BotaoLink href={`/orcamentos/${orcamento.id}`} variante="secundario">
           Voltar
         </BotaoLink>
@@ -47,7 +47,7 @@ export default async function PaginaImprimirOrcamento({
       </div>
 
       <Documento
-        tipo="Orcamento"
+        tipo="Orçamento"
         numero={String(orcamento.numero).padStart(4, "0")}
         emissao={orcamento.criadoEm}
         oficina={orcamento.oficina}
@@ -72,7 +72,7 @@ export default async function PaginaImprimirOrcamento({
         totalCentavos={orcamento.totalCentavos}
         rodape={
           orcamento.validadeAte
-            ? `Este orcamento vale ate ${data(orcamento.validadeAte)}. Precos sujeitos a alteracao apos essa data.`
+            ? `Este orçamento vale até ${data(orcamento.validadeAte)}. Preços sujeitos a alteração após essa data.`
             : undefined
         }
       />

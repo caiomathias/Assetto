@@ -9,9 +9,9 @@ import { dataInput, moeda } from "@/lib/format";
 import { FORMA_PAGAMENTO } from "@/lib/rotulos";
 
 /**
- * Fechamento da OS. Uma tela so para o momento em que o cliente paga.
- * Ao confirmar, o sistema baixa as pecas do estoque e lanca a receita no
- * financeiro - por isso o aviso explicito antes do botao.
+ * Fechamento da OS. Uma tela só para o momento em que o cliente paga.
+ * Ao confirmar, o sistema baixa as peças do estoque é lanca a receita no
+ * financeiro - por isso o aviso explicito antes do botão.
  */
 export function FormularioFaturamento({
   ordemId,
@@ -41,14 +41,14 @@ export function FormularioFaturamento({
         </Selecao>
       </Campo>
 
-      <Campo rotulo="O cliente ja pagou?" obrigatorio>
+      <Campo rotulo="O cliente já pagou?" obrigatorio>
         <Selecao
           name="situacao"
           value={situacao}
           onChange={(e) => setSituacao(e.target.value as "RECEBIDO" | "A_RECEBER")}
         >
           <option value="RECEBIDO">Sim, recebido agora</option>
-          <option value="A_RECEBER">Nao, vai pagar depois</option>
+          <option value="A_RECEBER">Não, vai pagar depois</option>
         </Selecao>
       </Campo>
 
@@ -56,7 +56,7 @@ export function FormularioFaturamento({
         rotulo={situacao === "RECEBIDO" ? "Data do recebimento" : "Data de vencimento"}
         ajuda={
           situacao === "A_RECEBER"
-            ? "Vai aparecer em contas a receber ate ser quitado."
+            ? "Vai aparecer em contas a receber até ser quitado."
             : undefined
         }
       >
@@ -64,8 +64,8 @@ export function FormularioFaturamento({
       </Campo>
 
       <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 ring-1 ring-amber-200">
-        Ao confirmar, as pecas saem do estoque e o valor entra no financeiro. Depois disso os
-        itens da OS nao podem mais ser alterados.
+        Ao confirmar, as peças saem do estoque e o valor entra no financeiro. Depois disso os
+        itens da OS não podem mais ser alterados.
       </p>
 
       <BotaoSalvar variante="sucesso" className="w-full">

@@ -4,8 +4,8 @@ import { cx } from "@/components/ui";
 
 export function AbasPecas({ atual }: { atual: "pecas" | "servicos" }) {
   const abas = [
-    { chave: "pecas", href: "/pecas", titulo: "Pecas em estoque" },
-    { chave: "servicos", href: "/pecas/servicos", titulo: "Servicos e mao de obra" },
+    { chave: "pecas", href: "/pecas", titulo: "Peças em estoque" },
+    { chave: "servicos", href: "/pecas/servicos", titulo: "Serviços e mão de obra" },
   ];
 
   return (

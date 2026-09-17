@@ -3,7 +3,7 @@ import { BotaoLink, Cabecalho, Cartao, Vazio } from "@/components/ui";
 import { exigirSessao } from "@/lib/auth";
 import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
 
-export const metadata = { title: "Novo orcamento - Assetto" };
+export const metadata = { title: "Novo orçamento - Assetto" };
 
 export default async function PaginaNovoOrcamento({
   searchParams,
@@ -21,11 +21,11 @@ export default async function PaginaNovoOrcamento({
   if (clientes.length === 0) {
     return (
       <>
-        <Cabecalho titulo="Novo orcamento" />
+        <Cabecalho titulo="Novo orçamento" />
         <Cartao>
           <Vazio
             titulo="Cadastre um cliente primeiro"
-            descricao="Todo orcamento e feito para um cliente e um veiculo."
+            descricao="Todo orçamento e feito para um cliente e um veículo."
             acao={<BotaoLink href="/clientes/novo">Cadastrar cliente</BotaoLink>}
           />
         </Cartao>
@@ -36,8 +36,8 @@ export default async function PaginaNovoOrcamento({
   return (
     <>
       <Cabecalho
-        titulo="Novo orcamento"
-        descricao="Monte a lista de servicos e pecas. O total e calculado sozinho."
+        titulo="Novo orçamento"
+        descricao="Monte a lista de serviços e peças. O total é calculado sozinho."
       />
       <FormularioOrcamento clientes={clientes} catalogo={catalogo} clienteInicialId={cliente} />
     </>

@@ -20,7 +20,7 @@ export async function salvarOficina(
   dados: FormData,
 ): Promise<Resultado> {
   const sessao = await exigirSessao();
-  if (!podeGerenciar(sessao.papel)) return falha("Voce nao tem permissao para alterar isso.");
+  if (!podeGerenciar(sessao.papel)) return falha("Você não tem permissão para alterar isso.");
 
   const analise = z
     .object({
@@ -74,7 +74,7 @@ export async function criarUsuario(
   dados: FormData,
 ): Promise<Resultado> {
   const sessao = await exigirSessao();
-  if (!podeGerenciar(sessao.papel)) return falha("Voce nao tem permissao para criar usuarios.");
+  if (!podeGerenciar(sessao.papel)) return falha("Você não tem permissão para criar usuários.");
 
   const analise = z
     .object({
@@ -93,7 +93,7 @@ export async function criarUsuario(
   if (!analise.success) return falha(analise.error.issues[0].message);
 
   const existe = await prisma.usuario.findUnique({ where: { email: analise.data.email } });
-  if (existe) return falha("Ja existe uma conta com esse e-mail.");
+  if (existe) return falha("Já existe uma conta com esse e-mail.");
 
   try {
     await prisma.usuario.create({
@@ -113,7 +113,7 @@ export async function criarUsuario(
   return sucesso();
 }
 
-/** Ativa/desativa um colega. Ninguem pode desativar a si mesmo. */
+/** Ativa/desativa um colega. Ninguém pode desativar a si mesmo. */
 export async function alternarUsuario(dados: FormData): Promise<void> {
   const sessao = await exigirSessao();
   if (!podeGerenciar(sessao.papel)) return;
@@ -128,8 +128,8 @@ export async function alternarUsuario(dados: FormData): Promise<void> {
 
   await prisma.usuario.update({ where: { id }, data: { ativo: !usuario.ativo } });
 
-  // Desativar precisa derrubar as sessoes abertas, senao a pessoa continua
-  // usando o sistema ate o cookie vencer.
+  // Desativar precisa derrubar as sessões abertas, senao a pessoa continua
+  // usando o sistema até o cookie vencer.
   if (usuario.ativo) await prisma.sessao.deleteMany({ where: { usuarioId: id } });
 
   revalidatePath("/configuracoes");
@@ -146,10 +146,10 @@ export async function trocarSenha(
   const confirmacao = dados.get("confirmacao")?.toString() ?? "";
 
   if (nova.length < 6) return falha("A nova senha precisa ter pelo menos 6 caracteres.");
-  if (nova !== confirmacao) return falha("As duas senhas digitadas nao sao iguais.");
+  if (nova !== confirmacao) return falha("As duas senhas digitadas não são iguais.");
 
   const usuario = await prisma.usuario.findUnique({ where: { id: sessao.usuarioId } });
-  if (!usuario) return falha("Usuario nao encontrado.");
+  if (!usuario) return falha("Usuário não encontrado.");
   if (!(await conferirSenha(atual, usuario.senhaHash))) return falha("Senha atual incorreta.");
 
   await prisma.usuario.update({

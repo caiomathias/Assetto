@@ -13,7 +13,7 @@ import { proximoNumero } from "@/lib/sequencia";
 
 const cabecalhoSchema = z.object({
   clienteId: z.string().min(1, "Escolha o cliente."),
-  veiculoId: z.string().min(1, "Escolha o veiculo."),
+  veiculoId: z.string().min(1, "Escolha o veículo."),
   validadeAte: z.string().optional(),
   kmAtual: z.string().optional(),
   descricaoProblema: z.string().trim().optional(),
@@ -47,12 +47,12 @@ export async function salvarOrcamento(
   const { clienteId, veiculoId, ...resto } = analise.data;
   const id = dados.get("id")?.toString() || null;
 
-  // O veiculo precisa ser desta oficina E deste cliente. Sem essa checagem,
+  // O veículo precisa ser desta oficina E deste cliente. Sem essa checagem,
   // trocar o id no formulario colaria o carro de outro cliente na OS.
   const veiculo = await prisma.veiculo.findFirst({
     where: { id: veiculoId, oficinaId, clienteId },
   });
-  if (!veiculo) return falha("Veiculo nao encontrado para este cliente.");
+  if (!veiculo) return falha("Veículo não encontrado para este cliente.");
 
   const km = resto.kmAtual ? Number.parseInt(resto.kmAtual, 10) : null;
 
@@ -72,13 +72,13 @@ export async function salvarOrcamento(
     orcamentoId = await prisma.$transaction(async (tx) => {
       if (id) {
         const atual = await tx.orcamento.findFirst({ where: { id, oficinaId } });
-        if (!atual) throw new Error("Orcamento nao encontrado.");
+        if (!atual) throw new Error("Orçamento não encontrado.");
         if (atual.status === "CONVERTIDO") {
-          throw new Error("Este orcamento ja virou ordem de servico e nao pode mais ser alterado.");
+          throw new Error("Este orçamento já virou ordem de serviço e não pode mais ser alterado.");
         }
 
-        // Trocar a lista inteira e mais simples e seguro do que tentar
-        // casar item a item: os ids dos itens nao importam para ninguem.
+        // Trocar a lista inteira é mais simples e seguro do que tentar
+        // casar item a item: os ids dos itens não importam para ninguém.
         await tx.itemOrcamento.deleteMany({ where: { orcamentoId: id } });
         await tx.orcamento.update({
           where: { id },
@@ -110,7 +110,7 @@ export async function salvarOrcamento(
   redirect(`/orcamentos/${orcamentoId}`);
 }
 
-/** Marca como enviado; e isso que libera o link publico de aprovacao. */
+/** Marca como enviado; é isso que libera o link público de aprovação. */
 export async function enviarAoCliente(dados: FormData): Promise<void> {
   const { oficinaId } = await exigirSessao();
   const id = dados.get("id")?.toString();
@@ -125,7 +125,7 @@ export async function enviarAoCliente(dados: FormData): Promise<void> {
   redirect(`/orcamentos/${id}`);
 }
 
-/** Aprovacao registrada pelo balcao (cliente respondeu por telefone). */
+/** Aprovação registrada pelo balcão (cliente respondeu por telefone). */
 export async function responderNoBalcao(dados: FormData): Promise<void> {
   const sessao = await exigirSessao();
   const id = dados.get("id")?.toString();
@@ -137,7 +137,7 @@ export async function responderNoBalcao(dados: FormData): Promise<void> {
     data: {
       status: resposta,
       respondidoEm: new Date(),
-      respondidoPor: `${sessao.nome} (registrado no balcao)`,
+      respondidoPor: `${sessao.nome} (registrado no balcão)`,
       motivoRecusa: resposta === "RECUSADO" ? dados.get("motivo")?.toString() || null : null,
     },
   });
@@ -147,9 +147,9 @@ export async function responderNoBalcao(dados: FormData): Promise<void> {
 }
 
 /**
- * Orcamento aprovado vira ordem de servico, copiando os itens.
- * A copia e proposital: depois disso o orcamento e um documento historico e
- * a OS segue a propria vida (o mecanico pode acrescentar peca).
+ * Orçamento aprovado vira ordem de serviço, copiando os itens.
+ * A cópia é proposital: depois disso o orçamento é um documento histórico e
+ * a OS segue a própria vida (o mecânico pode acrescentar peça).
  */
 export async function converterEmOS(dados: FormData): Promise<void> {
   const { oficinaId } = await exigirSessao();
@@ -161,13 +161,13 @@ export async function converterEmOS(dados: FormData): Promise<void> {
       where: { id, oficinaId },
       include: { itens: { orderBy: { ordem: "asc" } } },
     });
-    if (!orcamento) throw new Error("Orcamento nao encontrado.");
+    if (!orcamento) throw new Error("Orçamento não encontrado.");
     if (orcamento.status === "CONVERTIDO") {
       const existente = await tx.ordemServico.findFirst({ where: { orcamentoId: id } });
       return existente?.id ?? null;
     }
     if (orcamento.status !== "APROVADO") {
-      throw new Error("So da para abrir a OS depois que o cliente aprovar o orcamento.");
+      throw new Error("Só dá para abrir a OS depois que o cliente aprovar o orçamento.");
     }
 
     const numero = await proximoNumero(tx, oficinaId, "ORDEM_SERVICO");

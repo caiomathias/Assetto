@@ -7,7 +7,7 @@ import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
 import { dataInput, moedaSimples } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Editar ordem de servico - Assetto" };
+export const metadata = { title: "Editar ordem de serviço - Assetto" };
 
 export default async function PaginaEditarOS({ params }: { params: Promise<{ id: string }> }) {
   const { oficinaId } = await exigirSessao();

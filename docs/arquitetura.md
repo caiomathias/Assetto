@@ -54,6 +54,12 @@ lançado em dobro são os dois erros que fazem uma oficina abandonar o sistema.
 dentro da mesma transação do registro. Duas pessoas salvando ao mesmo tempo
 nunca geram o mesmo número.
 
+**Acento é regra, não detalhe.** Todo texto que o usuário lê é escrito em
+português correto, com acento. Identificadores, nomes de campo de formulário,
+rotas, chaves de enum e classes CSS ficam em ASCII — acentuar um desses quebra
+o sistema em silêncio. `npm run teste:acentos` abre todas as telas e falha se
+encontrar palavra sem acento no texto visível.
+
 **Nenhum erro técnico chega à tela.** `mensagemDeErro()` traduz os códigos do
 Prisma para português de gente. `P2002` vira "já existe um registro com esses
 dados".
@@ -117,7 +123,9 @@ vida — o mecânico pode acrescentar peça sem alterar o que o cliente aprovou.
 
 ## Antes de ir para produção
 
-1. Trocar `SESSION_SECRET` e as senhas do banco (`openssl rand -base64 32`).
+1. Trocar a senha do banco do `docker-compose.yml` e do `DATABASE_URL`. A
+   sessão não usa segredo de ambiente: o token é um valor aleatório de 256
+   bits guardado no banco, então não há nada para vazar num arquivo `.env`.
 2. Definir `NEXT_PUBLIC_APP_URL` com o domínio real — é o que monta o link de
    aprovação enviado ao cliente.
 3. Trocar `prisma db push` por `prisma migrate deploy`, para ter histórico de
@@ -134,6 +142,7 @@ vida — o mecânico pode acrescentar peça sem alterar o que o cliente aprovou.
   Funciona bem até uns 2 mil; depois, trocar por busca no servidor.
 - **Assinatura não é cobrada.** `Oficina.plano` existe mas nada verifica.
 - **Sem histórico de alteração** (quem mudou o quê). Só o estoque tem extrato.
-- **Sem testes unitários.** A cobertura é o teste de fumaça de ponta a ponta,
-  que protege o caminho do dinheiro. Vale acrescentar testes de `paraCentavos`
-  e `lerItens`, que são onde um erro silencioso custa caro.
+- **Sem testes unitários.** A cobertura são os dois testes de ponta a ponta
+  (`teste:fumaca` e `teste:acentos`), que protegem o caminho do dinheiro e a
+  qualidade do texto. Vale acrescentar testes de `paraCentavos` e `lerItens`,
+  que são onde um erro silencioso custa caro.

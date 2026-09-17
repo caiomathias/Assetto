@@ -10,9 +10,9 @@ import { quantidade as formatarQtd } from "@/lib/format";
 type Tipo = "ENTRADA" | "SAIDA" | "AJUSTE";
 
 const AJUDA: Record<Tipo, string> = {
-  ENTRADA: "Chegou peca nova do fornecedor.",
-  SAIDA: "Saiu peca sem passar por uma OS (perda, uso interno, devolucao).",
-  AJUSTE: "Contagem fisica: digite quantas unidades existem de verdade na prateleira.",
+  ENTRADA: "Chegou peça nova do fornecedor.",
+  SAIDA: "Saiu peça sem passar por uma OS (perda, uso interno, devolução).",
+  AJUSTE: "Contagem física: digite quantas unidades existem de verdade na prateleira.",
 };
 
 export function Movimentar({
@@ -32,8 +32,8 @@ export function Movimentar({
 
       <Campo rotulo="O que aconteceu" obrigatorio>
         <Selecao name="tipo" value={tipo} onChange={(e) => setTipo(e.target.value as Tipo)}>
-          <option value="ENTRADA">Entrou peca no estoque</option>
-          <option value="SAIDA">Saiu peca do estoque</option>
+          <option value="ENTRADA">Entrou peça no estoque</option>
+          <option value="SAIDA">Saiu peça do estoque</option>
           <option value="AJUSTE">Acertar pela contagem</option>
         </Selecao>
       </Campo>
@@ -57,7 +57,7 @@ export function Movimentar({
       </Campo>
 
       <Campo rotulo="Motivo (opcional)">
-        <Entrada name="motivo" placeholder="Ex: compra na Auto Pecas Silva" />
+        <Entrada name="motivo" placeholder="Ex: compra na Auto Peças Silva" />
       </Campo>
 
       <BotaoSalvar tamanho="normal" className="w-full">

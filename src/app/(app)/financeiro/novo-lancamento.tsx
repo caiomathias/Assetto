@@ -10,7 +10,7 @@ import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA, FORMA_PAGAMENTO } from "@/lib/r
 
 /**
  * Lancamento manual. O que vem de OS faturada entra sozinho; este formulario
- * e para o resto (aluguel, compra de peca, venda avulsa).
+ * e para o resto (aluguel, compra de peça, venda avulsa).
  */
 export function NovoLancamento() {
   const [tipo, setTipo] = useState<"RECEITA" | "DESPESA">("DESPESA");
@@ -39,11 +39,11 @@ export function NovoLancamento() {
       </div>
       <input type="hidden" name="tipo" value={tipo} />
 
-      <Campo rotulo="Descricao" obrigatorio>
+      <Campo rotulo="Descrição" obrigatorio>
         <Entrada
           name="descricao"
           required
-          placeholder={tipo === "RECEITA" ? "Venda de oleo no balcao" : "Aluguel de maio"}
+          placeholder={tipo === "RECEITA" ? "Venda de óleo no balcão" : "Aluguel de maio"}
         />
       </Campo>
 
@@ -67,7 +67,7 @@ export function NovoLancamento() {
 
       <Campo rotulo="Forma de pagamento">
         <Selecao name="formaPagamento" defaultValue="">
-          <option value="">Nao informar</option>
+          <option value="">Não informar</option>
           {Object.entries(FORMA_PAGAMENTO).map(([valor, texto]) => (
             <option key={valor} value={valor}>
               {texto}
@@ -79,12 +79,12 @@ export function NovoLancamento() {
       <label className="flex items-center gap-3 rounded-lg bg-slate-50 px-4 py-3">
         <input type="checkbox" name="jaPago" defaultChecked className="h-5 w-5" />
         <span className="font-semibold text-slate-800">
-          {tipo === "RECEITA" ? "Ja recebi esse dinheiro" : "Ja paguei essa conta"}
+          {tipo === "RECEITA" ? "Já recebi esse dinheiro" : "Já paguei essa conta"}
         </span>
       </label>
 
       <BotaoSalvar tamanho="normal" className="w-full">
-        Lancar
+        Lançar
       </BotaoSalvar>
     </Formulario>
   );

@@ -5,7 +5,7 @@ import type { ClienteResumo } from "@/components/seletor-cliente-veiculo";
 
 import { prisma } from "./prisma";
 
-/** Pecas + servicos ativos, no formato que o editor de itens espera. */
+/** Peças + serviços ativos, no formato que o editor de itens espera. */
 export async function carregarCatalogo(oficinaId: string): Promise<ItemCatalogo[]> {
   const [servicos, pecas] = await Promise.all([
     prisma.servico.findMany({
@@ -36,7 +36,7 @@ export async function carregarCatalogo(oficinaId: string): Promise<ItemCatalogo[
   ];
 }
 
-/** Clientes com veiculos, para o seletor do orcamento / da OS. */
+/** Clientes com veículos, para o seletor do orçamento / da OS. */
 export async function carregarClientes(oficinaId: string): Promise<ClienteResumo[]> {
   const clientes = await prisma.cliente.findMany({
     where: { oficinaId },

@@ -33,8 +33,8 @@ const CORES_COLUNA: Record<string, string> = {
 };
 
 /**
- * Funil de vendas. Mesmo formato do patio de proposito: quem aprendeu a
- * mexer numa tela ja sabe mexer na outra.
+ * Funil de vendas. Mesmo formato do pátio de propósito: quem aprendeu a
+ * mexer numa tela já sabe mexer na outra.
  */
 export function QuadroCrm({ cartoes }: { cartoes: CartaoCrm[] }) {
   const [otimista, setOtimista] = useState<Record<string, EtapaCrm>>({});
@@ -182,7 +182,7 @@ export function QuadroCrm({ cartoes }: { cartoes: CartaoCrm[] }) {
                         disabled={!proxima}
                         onClick={() => proxima && mover(cartao.id, proxima)}
                         className="flex min-h-9 flex-1 items-center justify-center rounded-md bg-marca-600 text-white hover:bg-marca-700 disabled:opacity-30"
-                        aria-label="Avancar etapa"
+                        aria-label="Avançar etapa"
                       >
                         <Icone.direita className="h-5 w-5" />
                       </button>

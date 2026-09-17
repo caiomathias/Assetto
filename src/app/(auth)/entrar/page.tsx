@@ -35,7 +35,7 @@ export default async function PaginaEntrar() {
       </Formulario>
 
       <p className="mt-6 text-center text-slate-600">
-        Ainda nao tem conta?{" "}
+        Ainda não tem conta?{" "}
         <Link href="/criar-conta" className="font-semibold text-marca-700 underline">
           Cadastre sua oficina
         </Link>

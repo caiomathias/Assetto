@@ -25,12 +25,12 @@ export type ClienteResumo = {
 };
 
 /**
- * Escolha de cliente e veiculo em duas etapas.
+ * Escolha de cliente e veículo em duas etapas.
  *
- * Um <select> com 800 clientes e inutil no balcao. Aqui a pessoa digita
- * qualquer pedaco de nome, telefone ou placa e ve no maximo 8 resultados
- * em botoes grandes. Depois escolhe o carro, que ja vem filtrado pelo
- * cliente - assim nao existe a combinacao errada.
+ * Um <select> com 800 clientes e inútil no balcão. Aqui a pessoa digita
+ * qualquer pedaço de nome, telefone ou placa e vê no máximo 8 resultados
+ * em botões grandes. Depois escolhe o carro, que já vem filtrado pelo
+ * cliente - assim não existe a combinação errada.
  */
 export function SeletorClienteVeiculo({
   clientes,
@@ -67,14 +67,14 @@ export function SeletorClienteVeiculo({
 
   function escolherCliente(escolhido: ClienteResumo) {
     setClienteId(escolhido.id);
-    // Um carro so: escolhe sozinho. Evita um clique obvio.
+    // Um carro so: escolhe sozinho. Evita um clique óbvio.
     setVeiculoId(escolhido.veiculos.length === 1 ? escolhido.veiculos[0].id : "");
     setBusca("");
   }
 
   return (
     <Cartao>
-      <CartaoTitulo>Cliente e veiculo</CartaoTitulo>
+      <CartaoTitulo>Cliente e veículo</CartaoTitulo>
       <input type="hidden" name="clienteId" value={clienteId} />
       <input type="hidden" name="veiculoId" value={veiculoId} />
 
@@ -153,19 +153,19 @@ export function SeletorClienteVeiculo({
 
             <div>
               <p className="mb-2 text-sm font-semibold text-slate-800">
-                Qual veiculo? <span className="text-red-600">*</span>
+                Qual veículo? <span className="text-red-600">*</span>
               </p>
 
               {cliente.veiculos.length === 0 ? (
                 <div className="rounded-lg bg-amber-50 px-4 py-4 ring-1 ring-amber-200">
                   <p className="font-semibold text-amber-900">
-                    Este cliente ainda nao tem veiculo cadastrado.
+                    Este cliente ainda não tem veículo cadastrado.
                   </p>
                   <Link
                     href={`/clientes/${cliente.id}/veiculos/novo`}
                     className="mt-1 inline-block font-semibold text-marca-700 underline"
                   >
-                    Cadastrar o veiculo agora
+                    Cadastrar o veículo agora
                   </Link>
                 </div>
               ) : (

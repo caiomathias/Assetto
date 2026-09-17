@@ -3,11 +3,11 @@ import "server-only";
 import type { Prisma, TipoSequencia } from "@prisma/client";
 
 /**
- * Proximo numero de OS / orcamento da oficina.
+ * Próximo número de OS / orçamento da oficina.
  *
- * Roda dentro da mesma transacao do registro que esta sendo criado. O `update`
- * atomico no Postgres serializa duas pessoas salvando ao mesmo tempo, entao
- * duas OS nunca saem com o mesmo numero.
+ * Roda dentro da mesma transação do registro que está sendo criado. O `update`
+ * atômico no Postgres serializa duas pessoas salvando ao mesmo tempo, então
+ * duas OS nunca saem com o mesmo número.
  */
 export async function proximoNumero(
   tx: Prisma.TransactionClient,

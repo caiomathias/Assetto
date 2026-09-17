@@ -56,7 +56,7 @@ export async function salvarOportunidade(
   try {
     if (id) {
       const r = await prisma.oportunidade.updateMany({ where: { id, oficinaId }, data: valores });
-      if (r.count === 0) return falha("Oportunidade nao encontrada.");
+      if (r.count === 0) return falha("Oportunidade não encontrada.");
     } else {
       await prisma.oportunidade.create({
         data: { ...valores, oficinaId, responsavelId: usuarioId },

@@ -6,7 +6,7 @@ export default function LayoutAutenticacao({ children }: { children: ReactNode }
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <p className="text-4xl font-black tracking-tight text-marca-700">Assetto</p>
-          <p className="mt-1 text-slate-600">Gestao de oficina, sem complicacao.</p>
+          <p className="mt-1 text-slate-600">Gestão de oficina, sem complicação.</p>
         </div>
         {children}
       </div>

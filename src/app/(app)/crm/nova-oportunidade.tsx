@@ -8,8 +8,8 @@ import { AreaTexto, Botao, Campo, Cartao, CartaoTitulo, Entrada, Selecao } from 
 import { ORIGENS_CRM } from "@/lib/rotulos";
 
 /**
- * Cadastro rapido de contato. Fica escondido atras de um botao porque o
- * quadro e a tela principal - o formulario nao pode competir com ele.
+ * Cadastro rapido de contato. Fica escondido atrás de um botão porque o
+ * quadro é a tela principal - o formulario não pode competir com ele.
  */
 export function NovaOportunidade() {
   const [aberto, setAberto] = useState(false);
@@ -45,9 +45,9 @@ export function NovaOportunidade() {
               <Entrada name="telefone" inputMode="tel" placeholder="11988887777" />
             </Campo>
 
-            <Campo rotulo="Como chegou ate a oficina">
+            <Campo rotulo="Como chegou até a oficina">
               <Selecao name="origem" defaultValue="">
-                <option value="">Nao informar</option>
+                <option value="">Não informar</option>
                 {ORIGENS_CRM.map((o) => (
                   <option key={o} value={o}>
                     {o}
@@ -56,7 +56,7 @@ export function NovaOportunidade() {
               </Selecao>
             </Campo>
 
-            <Campo rotulo="Valor estimado (R$)" ajuda="Quanto esse servico pode render.">
+            <Campo rotulo="Valor estimado (R$)" ajuda="Quanto esse serviço pode render.">
               <Entrada name="valorEstimado" inputMode="decimal" placeholder="0,00" />
             </Campo>
 
@@ -68,12 +68,12 @@ export function NovaOportunidade() {
               <Selecao name="etapa" defaultValue="NOVO">
                 <option value="NOVO">Novo contato</option>
                 <option value="CONTATO_FEITO">Contato feito</option>
-                <option value="ORCAMENTO_ENVIADO">Orcamento enviado</option>
+                <option value="ORCAMENTO_ENVIADO">Orçamento enviado</option>
                 <option value="NEGOCIACAO">Negociando</option>
               </Selecao>
             </Campo>
 
-            <Campo rotulo="Anotacoes" className="sm:col-span-4">
+            <Campo rotulo="Anotações" className="sm:col-span-4">
               <AreaTexto
                 name="observacoes"
                 placeholder="Ex: quer trocar a embreagem, pediu para ligar depois das 18h"

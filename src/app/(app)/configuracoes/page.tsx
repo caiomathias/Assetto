@@ -14,7 +14,7 @@ import { exigirSessao, podeGerenciar } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PAPEL } from "@/lib/rotulos";
 
-export const metadata = { title: "Configuracoes - Assetto" };
+export const metadata = { title: "Configurações - Assetto" };
 
 export default async function PaginaConfiguracoes() {
   const sessao = await exigirSessao();
@@ -33,7 +33,7 @@ export default async function PaginaConfiguracoes() {
   return (
     <>
       <Cabecalho
-        titulo="Configuracoes"
+        titulo="Configurações"
         descricao="Dados da oficina, equipe e sua senha."
       />
 
@@ -84,7 +84,7 @@ export default async function PaginaConfiguracoes() {
                       disabled={!gerente}
                     />
                   </Campo>
-                  <Campo rotulo="Numero" className="sm:col-span-1">
+                  <Campo rotulo="Número" className="sm:col-span-1">
                     <Entrada name="numero" defaultValue={oficina.numero ?? ""} disabled={!gerente} />
                   </Campo>
                   <Campo rotulo="Bairro" className="sm:col-span-2">
@@ -104,7 +104,7 @@ export default async function PaginaConfiguracoes() {
                 </div>
 
                 <p className="text-sm text-slate-500">
-                  Esses dados aparecem no cabecalho dos orcamentos e das ordens de servico
+                  Esses dados aparecem no cabecalho dos orçamentos e das ordens de serviço
                   impressas.
                 </p>
 
@@ -122,7 +122,7 @@ export default async function PaginaConfiguracoes() {
                     <p className="font-semibold text-slate-900">
                       {usuario.nome}
                       {usuario.id === sessao.usuarioId && (
-                        <span className="ml-2 text-sm font-normal text-slate-500">(voce)</span>
+                        <span className="ml-2 text-sm font-normal text-slate-500">(você)</span>
                       )}
                     </p>
                     <p className="text-sm text-slate-600">{usuario.email}</p>
@@ -164,10 +164,10 @@ export default async function PaginaConfiguracoes() {
                   <Campo rotulo="Nome" obrigatorio>
                     <Entrada name="nome" required />
                   </Campo>
-                  <Campo rotulo="E-mail" ajuda="Sera o login dessa pessoa." obrigatorio>
+                  <Campo rotulo="E-mail" ajuda="Será o login dessa pessoa." obrigatorio>
                     <Entrada name="email" type="email" required />
                   </Campo>
-                  <Campo rotulo="Senha inicial" ajuda="Minimo 6 caracteres." obrigatorio>
+                  <Campo rotulo="Senha inicial" ajuda="Mínimo 6 caracteres." obrigatorio>
                     <Entrada name="senha" type="password" required minLength={6} />
                   </Campo>
                   <Campo rotulo="O que essa pessoa faz" obrigatorio>
@@ -212,7 +212,7 @@ export default async function PaginaConfiguracoes() {
             <div className="space-y-2 p-5">
               <Selo tom="azul">{oficina.plano}</Selo>
               <p className="text-slate-600">
-                O controle de assinatura ainda nao esta ativo. Todas as funcoes estao liberadas.
+                O controle de assinatura ainda não está ativo. Todas as funções estão liberadas.
               </p>
             </div>
           </Cartao>

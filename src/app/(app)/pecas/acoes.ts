@@ -16,7 +16,7 @@ const opcional = z
   .nullable();
 
 const pecaSchema = z.object({
-  nome: z.string().trim().min(2, "Digite o nome da peca."),
+  nome: z.string().trim().min(2, "Digite o nome da peça."),
   codigo: opcional,
   marca: opcional,
   unidade: z.string().trim().default("UN"),
@@ -49,8 +49,8 @@ export async function salvarPeca(
 
   try {
     if (id) {
-      // Estoque NAO muda aqui. Quantidade so muda por movimento, para o
-      // saldo sempre ter um historico que explica como chegou nesse numero.
+      // Estoque NAO muda aqui. Quantidade só muda por movimento, para o
+      // saldo sempre ter um histórico que explica como chegou nesse número.
       const r = await prisma.peca.updateMany({
         where: { id, oficinaId },
         data: {
@@ -60,7 +60,7 @@ export async function salvarPeca(
           estoqueMinimo,
         },
       });
-      if (r.count === 0) return falha("Peca nao encontrada.");
+      if (r.count === 0) return falha("Peça não encontrada.");
     } else {
       await prisma.$transaction(async (tx) => {
         const peca = await tx.peca.create({
@@ -98,9 +98,9 @@ export async function salvarPeca(
 }
 
 /**
- * Entrada, saida ou acerto de estoque. Sempre grava um movimento com o
- * saldo resultante: e o extrato que explica qualquer divergencia de
- * inventario depois.
+ * Entrada, saída ou acerto de estoque. Sempre grava um movimento com o
+ * saldo resultante: é o extrato que explica qualquer divergência de
+ * inventário depois.
  */
 export async function movimentarEstoque(
   _anterior: Resultado | null,
@@ -113,22 +113,22 @@ export async function movimentarEstoque(
   const quantidade = paraQuantidade(dados.get("quantidade")?.toString());
   const motivo = dados.get("motivo")?.toString().trim() || null;
 
-  if (!pecaId) return falha("Peca nao informada.");
+  if (!pecaId) return falha("Peça não informada.");
   if (tipo !== "ENTRADA" && tipo !== "SAIDA" && tipo !== "AJUSTE") {
     return falha("Escolha o tipo de movimento.");
   }
   if (quantidade <= 0 && tipo !== "AJUSTE") {
     return falha("Digite uma quantidade maior que zero.");
   }
-  if (quantidade < 0) return falha("A quantidade nao pode ser negativa.");
+  if (quantidade < 0) return falha("A quantidade não pode ser negativa.");
 
   try {
     await prisma.$transaction(async (tx) => {
       const peca = await tx.peca.findFirst({ where: { id: pecaId, oficinaId } });
-      if (!peca) throw new Error("Peca nao encontrada.");
+      if (!peca) throw new Error("Peça não encontrada.");
 
-      // No AJUSTE a quantidade digitada e a contagem fisica, nao a diferenca:
-      // e assim que a pessoa pensa ao fazer inventario ("tem 7 aqui").
+      // No AJUSTE a quantidade digitada é a contagem física, não a diferenca:
+      // é assim que a pessoa pensa ao fazer inventário ("tem 7 aqui").
       const saldo =
         tipo === "ENTRADA"
           ? peca.quantidade + quantidade
@@ -146,7 +146,7 @@ export async function movimentarEstoque(
           tipo,
           quantidade: tipo === "AJUSTE" ? Number((quantidade - peca.quantidade).toFixed(3)) : quantidade,
           saldoDepois: arredondado,
-          motivo: motivo ?? (tipo === "AJUSTE" ? "Acerto de inventario" : null),
+          motivo: motivo ?? (tipo === "AJUSTE" ? "Acerto de inventário" : null),
           usuarioId,
         },
       });
@@ -167,7 +167,7 @@ export async function excluirPeca(dados: FormData): Promise<void> {
 
   const usada = await prisma.itemOS.count({ where: { pecaId: id } });
 
-  // Peca ja usada em OS vira inativa: some das buscas, mas o historico
+  // Peça já usada em OS vira inativa: some das buscas, mas o histórico
   // continua apontando para ela.
   if (usada > 0) {
     await prisma.peca.updateMany({ where: { id, oficinaId }, data: { ativo: false } });
@@ -180,7 +180,7 @@ export async function excluirPeca(dados: FormData): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// Catalogo de servicos
+// Catalogo de serviços
 // ---------------------------------------------------------------------------
 
 export async function salvarServico(
@@ -190,7 +190,7 @@ export async function salvarServico(
   const { oficinaId } = await exigirSessao();
 
   const nome = dados.get("nome")?.toString().trim();
-  if (!nome || nome.length < 2) return falha("Digite o nome do servico.");
+  if (!nome || nome.length < 2) return falha("Digite o nome do serviço.");
 
   const tempo = Number.parseInt(dados.get("tempoEstimadoMin")?.toString() ?? "", 10);
   const valores = {
@@ -206,7 +206,7 @@ export async function salvarServico(
   try {
     if (id) {
       const r = await prisma.servico.updateMany({ where: { id, oficinaId }, data: valores });
-      if (r.count === 0) return falha("Servico nao encontrado.");
+      if (r.count === 0) return falha("Serviço não encontrado.");
     } else {
       await prisma.servico.create({ data: { ...valores, oficinaId } });
     }

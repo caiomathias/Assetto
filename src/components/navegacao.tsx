@@ -14,19 +14,19 @@ type Item = {
 };
 
 /**
- * Ordem intencional: segue o dia de trabalho da oficina, nao a ordem
- * alfabetica. Patio vem primeiro porque e a tela que fica aberta o dia todo.
+ * Ordem intencional: segue o dia de trabalho da oficina, não a ordem
+ * alfabetica. Pátio vem primeiro porque é a tela que fica aberta o dia todo.
  */
 const ITENS: Item[] = [
   { href: "/painel", titulo: "Painel", icone: "painel" },
-  { href: "/patio", titulo: "Patio", icone: "patio" },
+  { href: "/patio", titulo: "Pátio", icone: "patio" },
   { href: "/clientes", titulo: "Clientes", icone: "cliente" },
-  { href: "/orcamentos", titulo: "Orcamentos", icone: "orcamento" },
-  { href: "/os", titulo: "Ordens de servico", icone: "os" },
-  { href: "/pecas", titulo: "Pecas", icone: "peca" },
+  { href: "/orcamentos", titulo: "Orçamentos", icone: "orcamento" },
+  { href: "/os", titulo: "Ordens de serviço", icone: "os" },
+  { href: "/pecas", titulo: "Peças", icone: "peca" },
   { href: "/financeiro", titulo: "Financeiro", icone: "financeiro" },
   { href: "/crm", titulo: "CRM", icone: "crm" },
-  { href: "/configuracoes", titulo: "Configuracoes", icone: "config" },
+  { href: "/configuracoes", titulo: "Configurações", icone: "config" },
 ];
 
 function estaAtivo(pathname: string, href: string): boolean {
@@ -82,7 +82,7 @@ export function MenuCelular() {
   const [aberto, setAberto] = useState(false);
   const pathname = usePathname();
 
-  // Fecha o menu ao trocar de pagina - senao ele fica por cima do conteudo.
+  // Fecha o menu ao trocar de página - senao ele fica por cima do conteudo.
   useEffect(() => setAberto(false), [pathname]);
 
   return (

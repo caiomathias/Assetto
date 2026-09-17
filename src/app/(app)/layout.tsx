@@ -14,7 +14,7 @@ export default async function LayoutSistema({ children }: { children: ReactNode 
       <MenuLateral />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="nao-imprimir sticky top-0 z-40 flex items-center gap-3 border-b border-slate-200 bg-white px-3 py-2 sm:px-5">
+        <header className="no-print sticky top-0 z-40 flex items-center gap-3 border-b border-slate-200 bg-white px-3 py-2 sm:px-5">
           <MenuCelular />
 
           <div className="min-w-0 flex-1">

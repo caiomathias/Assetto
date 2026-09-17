@@ -56,7 +56,7 @@ export function FormularioCliente({ cliente }: { cliente?: Cliente }) {
           <Campo rotulo="Rua" className="sm:col-span-4">
             <Entrada name="endereco" defaultValue={cliente?.endereco ?? ""} />
           </Campo>
-          <Campo rotulo="Numero" className="sm:col-span-1">
+          <Campo rotulo="Número" className="sm:col-span-1">
             <Entrada name="numero" defaultValue={cliente?.numero ?? ""} />
           </Campo>
           <Campo rotulo="Complemento" className="sm:col-span-2">
@@ -75,16 +75,16 @@ export function FormularioCliente({ cliente }: { cliente?: Cliente }) {
       </Cartao>
 
       <Cartao>
-        <CartaoTitulo>Observacoes</CartaoTitulo>
+        <CartaoTitulo>Observações</CartaoTitulo>
         <div className="p-5">
-          <Campo rotulo="Anotacoes sobre o cliente" ajuda="So a equipe da oficina ve isso.">
+          <Campo rotulo="Anotações sobre o cliente" ajuda="Só a equipe da oficina ve isso.">
             <AreaTexto name="observacoes" defaultValue={cliente?.observacoes ?? ""} />
           </Campo>
         </div>
       </Cartao>
 
       <div className="flex flex-wrap gap-3">
-        <BotaoSalvar>{cliente ? "Salvar alteracoes" : "Cadastrar cliente"}</BotaoSalvar>
+        <BotaoSalvar>{cliente ? "Salvar alterações" : "Cadastrar cliente"}</BotaoSalvar>
         <BotaoLink
           href={cliente ? `/clientes/${cliente.id}` : "/clientes"}
           variante="secundario"

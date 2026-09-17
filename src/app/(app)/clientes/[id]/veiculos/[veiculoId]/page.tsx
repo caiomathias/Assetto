@@ -6,7 +6,7 @@ import { exigirSessao } from "@/lib/auth";
 import { placa } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Editar veiculo - Assetto" };
+export const metadata = { title: "Editar veículo - Assetto" };
 
 export default async function PaginaEditarVeiculo({
   params,

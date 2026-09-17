@@ -8,7 +8,7 @@ import { falha, mensagemDeErro, type Resultado } from "@/lib/erros";
 import { prisma } from "@/lib/prisma";
 
 const entrarSchema = z.object({
-  email: z.string().trim().toLowerCase().email("Digite um e-mail valido."),
+  email: z.string().trim().toLowerCase().email("Digite um e-mail válido."),
   senha: z.string().min(1, "Digite sua senha."),
 });
 
@@ -24,7 +24,7 @@ export async function entrar(_anterior: Resultado | null, dados: FormData): Prom
 
   const usuario = await prisma.usuario.findUnique({ where: { email: analise.data.email } });
 
-  // Mensagem unica de proposito: nao revela se o e-mail existe.
+  // Mensagem única de propósito: não revela se o e-mail existe.
   const generico = "E-mail ou senha incorretos.";
   if (!usuario || !usuario.ativo) return falha(generico);
   if (!(await conferirSenha(analise.data.senha, usuario.senhaHash))) return falha(generico);
@@ -37,12 +37,12 @@ const criarContaSchema = z
   .object({
     oficina: z.string().trim().min(2, "Digite o nome da oficina."),
     nome: z.string().trim().min(2, "Digite seu nome."),
-    email: z.string().trim().toLowerCase().email("Digite um e-mail valido."),
+    email: z.string().trim().toLowerCase().email("Digite um e-mail válido."),
     senha: z.string().min(6, "A senha precisa ter pelo menos 6 caracteres."),
     confirmacao: z.string(),
   })
   .refine((d) => d.senha === d.confirmacao, {
-    message: "As duas senhas digitadas nao sao iguais.",
+    message: "As duas senhas digitadas não são iguais.",
     path: ["confirmacao"],
   });
 
@@ -63,12 +63,12 @@ export async function criarConta(
   const { oficina, nome, email, senha } = analise.data;
 
   const jaExiste = await prisma.usuario.findUnique({ where: { email } });
-  if (jaExiste) return falha("Ja existe uma conta com esse e-mail.");
+  if (jaExiste) return falha("Já existe uma conta com esse e-mail.");
 
   let usuarioId: string;
   try {
-    // Oficina e primeiro usuario nascem juntos: uma conta sem oficina nao
-    // conseguiria fazer nada, entao nao pode existir pela metade.
+    // Oficina e primeiro usuário nascem juntos: uma conta sem oficina não
+    // conseguiria fazer nada, então não pode existir pela metade.
     const criado = await prisma.$transaction(async (tx) => {
       const novaOficina = await tx.oficina.create({ data: { nome: oficina } });
       return tx.usuario.create({

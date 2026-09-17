@@ -35,14 +35,14 @@ export default async function PaginaImprimirOS({ params }: { params: Promise<{ i
 
   const relato = [
     ordem.descricaoProblema && `Cliente relatou: ${ordem.descricaoProblema}`,
-    ordem.diagnostico && `Diagnostico da oficina: ${ordem.diagnostico}`,
+    ordem.diagnostico && `Diagnóstico da oficina: ${ordem.diagnostico}`,
   ]
     .filter(Boolean)
     .join("\n\n");
 
   return (
     <>
-      <div className="nao-imprimir mb-5 flex flex-wrap gap-3">
+      <div className="no-print mb-5 flex flex-wrap gap-3">
         <BotaoLink href={`/os/${ordem.id}`} variante="secundario">
           Voltar
         </BotaoLink>
@@ -50,7 +50,7 @@ export default async function PaginaImprimirOS({ params }: { params: Promise<{ i
       </div>
 
       <Documento
-        tipo="Ordem de servico"
+        tipo="Ordem de serviço"
         numero={String(ordem.numero).padStart(4, "0")}
         emissao={ordem.criadoEm}
         oficina={ordem.oficina}
@@ -75,8 +75,8 @@ export default async function PaginaImprimirOS({ params }: { params: Promise<{ i
         totalCentavos={ordem.totalCentavos}
         rodape={
           ordem.responsavel
-            ? `Mecanico responsavel: ${ordem.responsavel.nome}`
-            : "Declaro que autorizei os servicos descritos acima."
+            ? `Mecânico responsável: ${ordem.responsavel.nome}`
+            : "Declaro que autorizei os serviços descritos acima."
         }
       />
     </>

@@ -11,8 +11,8 @@ import {
 } from "@prisma/client";
 
 /**
- * Texto que aparece na tela para cada valor de enum, e a cor do selo.
- * Centralizado aqui para a mesma OS nao ser "Em execucao" numa tela e
+ * Texto que aparece na tela para cada valor de enum, é a cor do selo.
+ * Centralizado aqui para a mesma OS não ser "Em execução" numa tela e
  * "Executando" na outra.
  */
 
@@ -22,41 +22,41 @@ export const STATUS_OS: Record<StatusOS, { titulo: string; tom: Tom; ajuda: stri
   RECEBIDO: {
     titulo: "Recebido",
     tom: "cinza",
-    ajuda: "Veiculo chegou na oficina e ainda nao foi avaliado.",
+    ajuda: "Veículo chegou na oficina e ainda não foi avaliado.",
   },
   AGUARDANDO_APROVACAO: {
-    titulo: "Aguardando aprovacao",
+    titulo: "Aguardando aprovação",
     tom: "amarelo",
-    ajuda: "Orcamento enviado, esperando o cliente responder.",
+    ajuda: "Orçamento enviado, esperando o cliente responder.",
   },
   EM_EXECUCAO: {
-    titulo: "Em execucao",
+    titulo: "Em execução",
     tom: "azul",
-    ajuda: "Servico aprovado e sendo feito pelo mecanico.",
+    ajuda: "Serviço aprovado e sendo feito pelo mecânico.",
   },
   AGUARDANDO_PECA: {
-    titulo: "Aguardando peca",
+    titulo: "Aguardando peça",
     tom: "laranja",
-    ajuda: "Servico parado esperando peca chegar.",
+    ajuda: "Serviço parado esperando peça chegar.",
   },
   PRONTO: {
     titulo: "Pronto",
     tom: "verde",
-    ajuda: "Servico terminado, avisar o cliente para retirar.",
+    ajuda: "Serviço terminado, avisar o cliente para retirar.",
   },
   ENTREGUE: {
     titulo: "Entregue",
     tom: "roxo",
-    ajuda: "Veiculo retirado pelo cliente.",
+    ajuda: "Veículo retirado pelo cliente.",
   },
   CANCELADO: {
     titulo: "Cancelado",
     tom: "vermelho",
-    ajuda: "Servico cancelado.",
+    ajuda: "Serviço cancelado.",
   },
 };
 
-/** Colunas do kanban do patio, na ordem em que aparecem. */
+/** Colunas do kanban do pátio, na ordem em que aparecem. */
 export const COLUNAS_PATIO: StatusOS[] = [
   StatusOS.RECEBIDO,
   StatusOS.AGUARDANDO_APROVACAO,
@@ -75,12 +75,12 @@ export const STATUS_ORCAMENTO: Record<StatusOrcamento, { titulo: string; tom: To
 };
 
 export const ETAPA_CRM: Record<EtapaCrm, { titulo: string; tom: Tom; ajuda: string }> = {
-  NOVO: { titulo: "Novo contato", tom: "cinza", ajuda: "Chegou agora, ninguem falou ainda." },
-  CONTATO_FEITO: { titulo: "Contato feito", tom: "azul", ajuda: "Ja conversamos com a pessoa." },
-  ORCAMENTO_ENVIADO: { titulo: "Orcamento enviado", tom: "amarelo", ajuda: "Mandamos o preco." },
-  NEGOCIACAO: { titulo: "Negociando", tom: "laranja", ajuda: "Discutindo preco ou prazo." },
+  NOVO: { titulo: "Novo contato", tom: "cinza", ajuda: "Chegou agora, ninguém falou ainda." },
+  CONTATO_FEITO: { titulo: "Contato feito", tom: "azul", ajuda: "Já conversamos com a pessoa." },
+  ORCAMENTO_ENVIADO: { titulo: "Orçamento enviado", tom: "amarelo", ajuda: "Mandamos o preço." },
+  NEGOCIACAO: { titulo: "Negociando", tom: "laranja", ajuda: "Discutindo preço ou prazo." },
   GANHO: { titulo: "Fechado", tom: "verde", ajuda: "Virou cliente." },
-  PERDIDO: { titulo: "Perdido", tom: "vermelho", ajuda: "Nao fechou." },
+  PERDIDO: { titulo: "Perdido", tom: "vermelho", ajuda: "Não fechou." },
 };
 
 export const COLUNAS_CRM: EtapaCrm[] = [
@@ -93,14 +93,14 @@ export const COLUNAS_CRM: EtapaCrm[] = [
 ];
 
 export const PAPEL: Record<Papel, { titulo: string; ajuda: string }> = {
-  DONO: { titulo: "Dono", ajuda: "Acesso total, incluindo financeiro e usuarios." },
-  GERENTE: { titulo: "Gerente", ajuda: "Acesso total, menos exclusao da oficina." },
-  ATENDENTE: { titulo: "Atendente", ajuda: "Cadastra clientes, orcamentos e OS." },
-  MECANICO: { titulo: "Mecanico", ajuda: "Ve o patio e atualiza o andamento dos servicos." },
+  DONO: { titulo: "Dono", ajuda: "Acesso total, incluindo financeiro e usuários." },
+  GERENTE: { titulo: "Gerente", ajuda: "Acesso total, menos exclusão da oficina." },
+  ATENDENTE: { titulo: "Atendente", ajuda: "Cadastra clientes, orçamentos e OS." },
+  MECANICO: { titulo: "Mecânico", ajuda: "Vê o pátio e atualiza o andamento dos serviços." },
 };
 
 export const TIPO_PESSOA: Record<TipoPessoa, string> = {
-  FISICA: "Pessoa fisica (CPF)",
+  FISICA: "Pessoa física (CPF)",
   JURIDICA: "Empresa (CNPJ)",
 };
 
@@ -110,42 +110,42 @@ export const COMBUSTIVEL: Record<Combustivel, string> = {
   ETANOL: "Etanol",
   DIESEL: "Diesel",
   GNV: "GNV",
-  ELETRICO: "Eletrico",
-  HIBRIDO: "Hibrido",
+  ELETRICO: "Elétrico",
+  HIBRIDO: "Híbrido",
 };
 
 export const FORMA_PAGAMENTO: Record<FormaPagamento, string> = {
   DINHEIRO: "Dinheiro",
   PIX: "Pix",
-  DEBITO: "Cartao de debito",
-  CREDITO: "Cartao de credito",
+  DEBITO: "Cartão de débito",
+  CREDITO: "Cartão de crédito",
   BOLETO: "Boleto",
-  TRANSFERENCIA: "Transferencia",
+  TRANSFERENCIA: "Transferência",
   OUTRO: "Outro",
 };
 
 export const TIPO_LANCAMENTO: Record<TipoLancamento, { titulo: string; tom: Tom }> = {
   RECEITA: { titulo: "Entrada", tom: "verde" },
-  DESPESA: { titulo: "Saida", tom: "vermelho" },
+  DESPESA: { titulo: "Saída", tom: "vermelho" },
 };
 
 export const TIPO_MOVIMENTO: Record<TipoMovimento, { titulo: string; tom: Tom }> = {
   ENTRADA: { titulo: "Entrada", tom: "verde" },
-  SAIDA: { titulo: "Saida", tom: "vermelho" },
+  SAIDA: { titulo: "Saída", tom: "vermelho" },
   AJUSTE: { titulo: "Ajuste", tom: "azul" },
 };
 
 export const CATEGORIAS_RECEITA = [
-  "Servico / OS",
-  "Venda de peca",
+  "Serviço / OS",
+  "Venda de peça",
   "Outros recebimentos",
 ];
 
 export const CATEGORIAS_DESPESA = [
-  "Compra de pecas",
-  "Salarios",
+  "Compra de peças",
+  "Salários",
   "Aluguel",
-  "Agua / Luz / Internet",
+  "Água / Luz / Internet",
   "Ferramentas",
   "Impostos",
   "Marketing",
@@ -153,7 +153,7 @@ export const CATEGORIAS_DESPESA = [
 ];
 
 export const ORIGENS_CRM = [
-  "Indicacao",
+  "Indicação",
   "Instagram",
   "Google",
   "WhatsApp",

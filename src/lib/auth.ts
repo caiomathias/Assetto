@@ -53,7 +53,7 @@ export async function encerrarSessao(): Promise<void> {
   jar.delete(COOKIE);
 }
 
-/** Sessao atual, ou null se ninguem estiver logado. Nao redireciona. */
+/** Sessão atual, ou null se ninguém estiver logado. Não redireciona. */
 export async function sessaoAtual(): Promise<Sessao | null> {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
@@ -78,8 +78,8 @@ export async function sessaoAtual(): Promise<Sessao | null> {
 }
 
 /**
- * Sessao obrigatoria. Use em toda pagina e action de dentro do sistema:
- * alem de autenticar, e daqui que sai o `oficinaId` que isola os dados.
+ * Sessão obrigatória. Use em toda página e action de dentro do sistema:
+ * além de autenticar, é daqui que sai o `oficinaId` que isola os dados.
  */
 export async function exigirSessao(): Promise<Sessao> {
   const sessao = await sessaoAtual();

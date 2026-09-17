@@ -2,8 +2,8 @@ import { z } from "zod";
 
 /**
  * Itens chegam do navegador como JSON num campo escondido (ver
- * components/editor-itens.tsx). Aqui eles sao validados e os totais
- * recalculados NO SERVIDOR - o valor que o cliente digitou na tela nunca e
+ * components/editor-itens.tsx). Aqui eles são validados e os totais
+ * recalculados NO SERVIDOR - o valor que o cliente digitou na tela nunca é
  * usado como verdade.
  */
 const itemSchema = z.object({
@@ -35,19 +35,19 @@ export function lerItens(bruto: FormDataEntryValue | null): ItensLidos {
   try {
     json = JSON.parse((bruto ?? "[]").toString());
   } catch {
-    return { ok: false, erro: "Nao foi possivel ler a lista de itens. Recarregue a pagina." };
+    return { ok: false, erro: "Não foi possível ler a lista de itens. Recarregue a página." };
   }
 
   const analise = z.array(itemSchema).safeParse(json);
   if (!analise.success) {
     return {
       ok: false,
-      erro: "Confira os itens: todo item precisa de descricao e quantidade maior que zero.",
+      erro: "Confira os itens: todo item precisa de descrição e quantidade maior que zero.",
     };
   }
 
   if (analise.data.length === 0) {
-    return { ok: false, erro: "Adicione pelo menos um servico ou peca." };
+    return { ok: false, erro: "Adicione pelo menos um serviço ou peça." };
   }
 
   const itens: ItemValidado[] = analise.data.map((item, ordem) => ({

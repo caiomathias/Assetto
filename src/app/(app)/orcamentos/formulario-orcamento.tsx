@@ -28,8 +28,8 @@ export function FormularioOrcamento({
     itens: ItemEditavel[];
   };
 }) {
-  // Validade padrao de 7 dias: e o prazo que a oficina consegue segurar
-  // preco de peca sem se comprometer.
+  // Validade padrão de 7 dias: é o prazo que a oficina consegue segurar
+  // preço de peça sem se comprometer.
   const validadePadrao = new Date();
   validadePadrao.setDate(validadePadrao.getDate() + 7);
   const validadeISO = validadePadrao.toISOString().slice(0, 10);
@@ -70,7 +70,7 @@ export function FormularioOrcamento({
             />
           </Campo>
 
-          <Campo rotulo="Vale ate" ajuda="Depois dessa data o preco pode mudar.">
+          <Campo rotulo="Vale até" ajuda="Depois dessa data o preço pode mudar.">
             <Entrada
               name="validadeAte"
               type="date"
@@ -87,20 +87,20 @@ export function FormularioOrcamento({
       />
 
       <Cartao>
-        <CartaoTitulo>Observacoes</CartaoTitulo>
+        <CartaoTitulo>Observações</CartaoTitulo>
         <div className="p-5">
-          <Campo rotulo="Observacoes no orcamento" ajuda="O cliente le isso.">
+          <Campo rotulo="Observações no orçamento" ajuda="O cliente lê isso.">
             <AreaTexto
               name="observacoes"
               defaultValue={orcamento?.observacoes ?? ""}
-              placeholder="Ex: valor nao inclui alinhamento"
+              placeholder="Ex: valor não inclui alinhamento"
             />
           </Campo>
         </div>
       </Cartao>
 
       <div className="flex flex-wrap gap-3">
-        <BotaoSalvar>{orcamento ? "Salvar alteracoes" : "Criar orcamento"}</BotaoSalvar>
+        <BotaoSalvar>{orcamento ? "Salvar alterações" : "Criar orçamento"}</BotaoSalvar>
         <BotaoLink
           href={orcamento ? `/orcamentos/${orcamento.id}` : "/orcamentos"}
           variante="secundario"

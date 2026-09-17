@@ -4,7 +4,7 @@ import { exigirSessao } from "@/lib/auth";
 import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Nova ordem de servico - Assetto" };
+export const metadata = { title: "Nova ordem de serviço - Assetto" };
 
 export default async function PaginaNovaOS({
   searchParams,
@@ -27,11 +27,11 @@ export default async function PaginaNovaOS({
   if (clientes.length === 0) {
     return (
       <>
-        <Cabecalho titulo="Nova ordem de servico" />
+        <Cabecalho titulo="Nova ordem de serviço" />
         <Cartao>
           <Vazio
             titulo="Cadastre um cliente primeiro"
-            descricao="Toda ordem de servico pertence a um cliente e a um veiculo."
+            descricao="Toda ordem de serviço pertence a um cliente e a um veículo."
             acao={<BotaoLink href="/clientes/novo">Cadastrar cliente</BotaoLink>}
           />
         </Cartao>
@@ -42,8 +42,8 @@ export default async function PaginaNovaOS({
   return (
     <>
       <Cabecalho
-        titulo="Nova ordem de servico"
-        descricao="Use quando o servico ja esta autorizado e nao precisa de orcamento."
+        titulo="Nova ordem de serviço"
+        descricao="Use quando o serviço já está autorizado e não precisa de orçamento."
       />
       <FormularioOS clientes={clientes} catalogo={catalogo} mecanicos={mecanicos} clienteInicialId={cliente} />
     </>

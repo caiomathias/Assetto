@@ -21,7 +21,7 @@ function atualizarTelas(id?: string) {
 
 const cabecalhoSchema = z.object({
   clienteId: z.string().min(1, "Escolha o cliente."),
-  veiculoId: z.string().min(1, "Escolha o veiculo."),
+  veiculoId: z.string().min(1, "Escolha o veículo."),
   responsavelId: z.string().optional(),
   kmEntrada: z.string().optional(),
   previsaoEntrega: z.string().optional(),
@@ -62,7 +62,7 @@ export async function salvarOS(
   const veiculo = await prisma.veiculo.findFirst({
     where: { id: veiculoId, oficinaId, clienteId },
   });
-  if (!veiculo) return falha("Veiculo nao encontrado para este cliente.");
+  if (!veiculo) return falha("Veículo não encontrado para este cliente.");
 
   const km = resto.kmEntrada ? Number.parseInt(resto.kmEntrada, 10) : null;
 
@@ -84,10 +84,10 @@ export async function salvarOS(
     ordemId = await prisma.$transaction(async (tx) => {
       if (id) {
         const atual = await tx.ordemServico.findFirst({ where: { id, oficinaId } });
-        if (!atual) throw new Error("Ordem de servico nao encontrada.");
+        if (!atual) throw new Error("Ordem de serviço não encontrada.");
         if (atual.estoqueBaixado) {
           throw new Error(
-            "Esta OS ja foi faturada. Os itens nao podem mais mudar porque o estoque e o financeiro ja foram lancados.",
+            "Esta OS já foi faturada. Os itens não podem mais mudar porque o estoque e o financeiro já foram lançados.",
           );
         }
 
@@ -120,8 +120,8 @@ export async function salvarOS(
 }
 
 /**
- * Move a OS de coluna no patio. Cada status carrega um carimbo de tempo,
- * porque e disso que saem os indicadores de "quanto tempo o carro ficou aqui".
+ * Move a OS de coluna no pátio. Cada status carrega um carimbo de tempo,
+ * porque é disso que saem os indicadores de "quanto tempo o carro ficou aqui".
  */
 export async function mudarStatus(dados: FormData): Promise<void> {
   const { oficinaId } = await exigirSessao();
@@ -161,14 +161,14 @@ const faturamentoSchema = z.object({
 });
 
 /**
- * Fatura a OS. E o unico ponto do sistema onde tres coisas acontecem juntas,
- * e por isso tudo roda numa transacao so:
- *   1. baixa do estoque das pecas usadas, com movimento para auditoria;
+ * Fatura a OS. E o único ponto do sistema onde três coisas acontecem juntas,
+ * e por isso tudo roda numa transação so:
+ *   1. baixa do estoque das peças usadas, com movimento para auditoria;
  *   2. lancamento da receita no financeiro;
- *   3. marcacao da OS como faturada, para nao repetir.
+ *   3. marcação da OS como faturada, para não repetir.
  *
  * Se qualquer passo falhar, nenhum acontece. Estoque errado e dinheiro
- * lancado em dobro sao os dois erros que destroem a confianca no sistema.
+ * lancado em dobro são os dois erros que destroem a confianca no sistema.
  */
 export async function faturarOS(
   _anterior: Resultado | null,
@@ -176,7 +176,7 @@ export async function faturarOS(
 ): Promise<Resultado> {
   const { oficinaId, usuarioId } = await exigirSessao();
   const id = dados.get("id")?.toString();
-  if (!id) return falha("Ordem de servico nao informada.");
+  if (!id) return falha("Ordem de serviço não informada.");
 
   const analise = faturamentoSchema.safeParse({
     formaPagamento: dados.get("formaPagamento"),
@@ -194,12 +194,12 @@ export async function faturarOS(
         where: { id, oficinaId },
         include: { itens: true },
       });
-      if (!ordem) throw new Error("Ordem de servico nao encontrada.");
-      if (ordem.estoqueBaixado) throw new Error("Esta OS ja foi faturada.");
-      if (ordem.status === "CANCELADO") throw new Error("OS cancelada nao pode ser faturada.");
+      if (!ordem) throw new Error("Ordem de serviço não encontrada.");
+      if (ordem.estoqueBaixado) throw new Error("Esta OS já foi faturada.");
+      if (ordem.status === "CANCELADO") throw new Error("OS cancelada não pode ser faturada.");
       if (ordem.itens.length === 0) throw new Error("Adicione itens antes de faturar.");
 
-      // Um item pode aparecer duas vezes (duas linhas da mesma peca).
+      // Um item pode aparecer duas vezes (duas linhas da mesma peça).
       // Somar antes evita dois updates concorrentes na mesma linha.
       const porPeca = new Map<string, number>();
       for (const item of ordem.itens) {
@@ -211,9 +211,9 @@ export async function faturarOS(
         const peca = await tx.peca.findFirst({ where: { id: pecaId, oficinaId } });
         if (!peca) continue;
 
-        // Estoque negativo e permitido de proposito: a peca ja foi montada no
-        // carro. Bloquear aqui so faria a oficina parar de usar o sistema.
-        // O saldo negativo fica visivel na tela de pecas para ser acertado.
+        // Estoque negativo é permitido de propósito: a peça já foi montada no
+        // carro. Bloquear aqui só faria a oficina parar de usar o sistema.
+        // O saldo negativo fica visivel na tela de peças para ser acertado.
         const saldo = Number((peca.quantidade - quantidade).toFixed(3));
 
         await tx.peca.update({ where: { id: pecaId }, data: { quantidade: saldo } });
@@ -235,7 +235,7 @@ export async function faturarOS(
         data: {
           oficinaId,
           tipo: "RECEITA",
-          categoria: "Servico / OS",
+          categoria: "Serviço / OS",
           descricao: `OS ${String(ordem.numero).padStart(4, "0")}`,
           valorCentavos: ordem.totalCentavos,
           vencimento,
@@ -271,7 +271,7 @@ export async function excluirOS(dados: FormData): Promise<void> {
   const id = dados.get("id")?.toString();
   if (!id) return;
 
-  // OS faturada e documento contabil: cancela, nao apaga.
+  // OS faturada é documento contábil: cancela, não apaga.
   const ordem = await prisma.ordemServico.findFirst({ where: { id, oficinaId } });
   if (!ordem) return;
 
@@ -287,8 +287,8 @@ export async function excluirOS(dados: FormData): Promise<void> {
 }
 
 /**
- * Versao chamada pelo arrastar-e-soltar do patio. Recebe argumentos simples
- * em vez de FormData porque quem chama e JavaScript, nao um <form>.
+ * Versão chamada pelo arrastar-e-soltar do pátio. Recebe argumentos simples
+ * em vez de FormData porque quem chama e JavaScript, não um <form>.
  */
 export async function moverOS(id: string, novoStatus: string): Promise<void> {
   const { oficinaId } = await exigirSessao();

@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-// Em desenvolvimento o Next recarrega os modulos a cada alteracao. Sem o cache
-// global, cada reload abriria um novo pool de conexoes ate estourar o limite.
+// Em desenvolvimento o Next recarrega os módulos a cada alteração. Sem o cache
+// global, cada reload abriria um novo pool de conexoes até estourar o limite.
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 export const prisma =

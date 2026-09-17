@@ -5,13 +5,13 @@ import { exigirSessao } from "@/lib/auth";
 import { data, placa } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Patio - Assetto" };
+export const metadata = { title: "Pátio - Assetto" };
 
 export default async function PaginaPatio() {
   const { oficinaId } = await exigirSessao();
 
-  // Entregues antigas sairiam do quadro e viram historico: mostrar so as de
-  // hoje mantem a coluna util sem transformar o patio num arquivo morto.
+  // Entregues antigas sairiam do quadro e viram histórico: mostrar só as de
+  // hoje mantém a coluna útil sem transformar o pátio num arquivo morto.
   const inicioDeHoje = new Date();
   inicioDeHoje.setHours(0, 0, 0, 0);
 
@@ -27,7 +27,6 @@ export default async function PaginaPatio() {
     orderBy: { criadoEm: "asc" },
   });
 
-  const agora = new Date();
   const cartoes: CartaoOS[] = ordens.map((os) => ({
     id: os.id,
     numero: os.numero,
@@ -40,7 +39,7 @@ export default async function PaginaPatio() {
     previsaoEntrega: os.previsaoEntrega ? data(os.previsaoEntrega) : null,
     atrasada:
       os.previsaoEntrega !== null &&
-      os.previsaoEntrega < agora &&
+      os.previsaoEntrega < inicioDeHoje &&
       os.status !== "ENTREGUE" &&
       os.status !== "PRONTO",
   }));
@@ -48,12 +47,12 @@ export default async function PaginaPatio() {
   return (
     <>
       <Cabecalho
-        titulo="Patio"
-        descricao="Onde cada carro esta agora. Arraste o cartao ou use as setas para mudar de coluna."
+        titulo="Pátio"
+        descricao="Onde cada carro está agora. Arraste o cartão ou use as setas para mudar de coluna."
         acao={
           <BotaoLink href="/os/nova">
             <Icone.mais className="h-5 w-5" />
-            Nova ordem de servico
+            Nova ordem de serviço
           </BotaoLink>
         }
       />
@@ -61,9 +60,9 @@ export default async function PaginaPatio() {
       {cartoes.length === 0 ? (
         <Cartao>
           <Vazio
-            titulo="Nenhum carro no patio"
-            descricao="Assim que uma ordem de servico for aberta, o carro aparece aqui."
-            acao={<BotaoLink href="/os/nova">Abrir ordem de servico</BotaoLink>}
+            titulo="Nenhum carro no pátio"
+            descricao="Assim que uma ordem de serviço for aberta, o carro aparece aqui."
+            acao={<BotaoLink href="/os/nova">Abrir ordem de serviço</BotaoLink>}
           />
         </Cartao>
       ) : (

@@ -25,7 +25,7 @@ import { prisma } from "@/lib/prisma";
 import { STATUS_ORCAMENTO } from "@/lib/rotulos";
 import { urlDoApp } from "@/lib/url";
 
-export const metadata = { title: "Orcamento - Assetto" };
+export const metadata = { title: "Orçamento - Assetto" };
 
 export default async function PaginaOrcamento({ params }: { params: Promise<{ id: string }> }) {
   const sessao = await exigirSessao();
@@ -54,7 +54,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
   return (
     <>
       <Cabecalho
-        titulo={`Orcamento ${numero}`}
+        titulo={`Orçamento ${numero}`}
         descricao={`${orcamento.cliente.nome} - ${placa(orcamento.veiculo.placa)} ${orcamento.veiculo.marca} ${orcamento.veiculo.modelo}`}
         acao={
           <>
@@ -64,7 +64,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
               </BotaoLink>
             )}
             <BotaoLink href={`/orcamentos/${orcamento.id}/imprimir`} variante="secundario">
-              Ver via para impressao
+              Ver via para impressão
             </BotaoLink>
             <BotaoImprimir />
           </>
@@ -76,7 +76,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
           {rotulo.titulo}
         </Selo>
         {orcamento.validadeAte && (
-          <span className="text-slate-600">Vale ate {data(orcamento.validadeAte)}</span>
+          <span className="text-slate-600">Vale até {data(orcamento.validadeAte)}</span>
         )}
       </div>
 
@@ -85,12 +85,12 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
           <Aviso tom="verde">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="font-semibold">
-                O cliente aprovou. Agora e so abrir a ordem de servico.
+                O cliente aprovou. Agora é só abrir a ordem de serviço.
               </span>
               <form action={converterEmOS}>
                 <input type="hidden" name="id" value={orcamento.id} />
                 <BotaoAcao variante="sucesso" tamanho="normal">
-                  Abrir ordem de servico
+                  Abrir ordem de serviço
                 </BotaoAcao>
               </form>
             </div>
@@ -103,11 +103,11 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
           <Aviso tom="azul">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span>
-                Este orcamento virou a OS{" "}
+                Este orçamento virou a OS{" "}
                 <strong>{String(orcamento.ordemServico.numero).padStart(4, "0")}</strong>.
               </span>
               <BotaoLink href={`/os/${orcamento.ordemServico.id}`} tamanho="pequeno">
-                Ver ordem de servico
+                Ver ordem de serviço
               </BotaoLink>
             </div>
           </Aviso>
@@ -138,7 +138,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
           )}
 
           <Cartao>
-            <CartaoTitulo>Pecas e servicos</CartaoTitulo>
+            <CartaoTitulo>Peças e serviços</CartaoTitulo>
             <TabelaItens
               itens={orcamento.itens}
               descontoCentavos={orcamento.descontoCentavos}
@@ -148,7 +148,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
 
           {orcamento.observacoes && (
             <Cartao>
-              <CartaoTitulo>Observacoes</CartaoTitulo>
+              <CartaoTitulo>Observações</CartaoTitulo>
               <p className="p-5 whitespace-pre-wrap text-slate-800">{orcamento.observacoes}</p>
             </Cartao>
           )}
@@ -161,7 +161,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
               {orcamento.status === "RASCUNHO" ? (
                 <>
                   <p className="text-slate-700">
-                    Marque como enviado para liberar o link de aprovacao do cliente.
+                    Marque como enviado para liberar o link de aprovação do cliente.
                   </p>
                   <form action={enviarAoCliente}>
                     <input type="hidden" name="id" value={orcamento.id} />
@@ -194,7 +194,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
                   <input type="hidden" name="id" value={orcamento.id} />
                   <input type="hidden" name="resposta" value="APROVADO" />
                   <BotaoAcao variante="sucesso" tamanho="normal" className="w-full">
-                    Registrar aprovacao
+                    Registrar aprovação
                   </BotaoAcao>
                 </form>
 
@@ -211,7 +211,7 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
           )}
 
           <Cartao>
-            <CartaoTitulo>Informacoes</CartaoTitulo>
+            <CartaoTitulo>Informações</CartaoTitulo>
             <dl className="space-y-3 p-5 text-sm">
               <div>
                 <dt className="font-semibold text-slate-500">Cliente</dt>
@@ -255,9 +255,9 @@ export default async function PaginaOrcamento({ params }: { params: Promise<{ id
                     variante="perigo"
                     tamanho="normal"
                     className="w-full"
-                    confirmar={`Excluir o orcamento ${numero}?`}
+                    confirmar={`Excluir o orçamento ${numero}?`}
                   >
-                    Excluir orcamento
+                    Excluir orçamento
                   </BotaoAcao>
                 </form>
               </div>

@@ -11,8 +11,8 @@ export type ItemExibido = {
 };
 
 /**
- * Tabela de itens usada no orcamento, na OS e na via impressa.
- * No celular vira lista - tabela de 4 colunas nao cabe em tela de 360px.
+ * Tabela de itens usada no orçamento, na OS e na via impressa.
+ * No celular vira lista - tabela de 4 colunas não cabe em tela de 360px.
  */
 export function TabelaItens({
   itens,
@@ -34,7 +34,7 @@ export function TabelaItens({
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <Selo tom={item.tipo === "PECA" ? "azul" : "roxo"}>
-                  {item.tipo === "PECA" ? "Peca" : "Servico"}
+                  {item.tipo === "PECA" ? "Peça" : "Serviço"}
                 </Selo>
                 <p className="mt-1 font-semibold text-slate-900">{item.descricao}</p>
                 <p className="text-sm text-slate-600">
@@ -47,11 +47,11 @@ export function TabelaItens({
         ))}
       </ul>
 
-      {/* Telas maiores e impressao */}
+      {/* Telas maiores e impressão */}
       <table className="hidden w-full sm:table">
         <thead>
           <tr className="border-b border-slate-200 text-left text-sm text-slate-500">
-            <th className="px-5 py-2 font-semibold">Descricao</th>
+            <th className="px-5 py-2 font-semibold">Descrição</th>
             <th className="px-3 py-2 text-right font-semibold">Qtd</th>
             <th className="px-3 py-2 text-right font-semibold">Valor unit.</th>
             <th className="px-5 py-2 text-right font-semibold">Total</th>
@@ -63,7 +63,7 @@ export function TabelaItens({
               <td className="px-5 py-3">
                 <span className="font-medium text-slate-900">{item.descricao}</span>
                 <span className="ml-2 text-sm text-slate-500">
-                  {item.tipo === "PECA" ? "peca" : "servico"}
+                  {item.tipo === "PECA" ? "peça" : "serviço"}
                 </span>
               </td>
               <td className="px-3 py-3 text-right tabular-nums text-slate-700">

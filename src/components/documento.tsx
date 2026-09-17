@@ -14,8 +14,8 @@ export type DadosOficina = {
 };
 
 /**
- * Via impressa de orcamento e de OS. Mesmo layout para os dois: o cliente
- * reconhece o documento, e a oficina so tem um modelo para conferir.
+ * Via impressa de orçamento e de OS. Mesmo layout para os dois: o cliente
+ * reconhece o documento, é a oficina só tem um modelo para conferir.
  * Pensado para caber em uma folha A4.
  */
 export function Documento({
@@ -66,7 +66,7 @@ export function Documento({
     .join(" - ");
 
   return (
-    <div className="pagina-impressa mx-auto max-w-3xl bg-white p-6 text-slate-900 ring-1 ring-slate-200 sm:p-10 print:ring-0">
+    <div className="print-page mx-auto max-w-3xl bg-white p-6 text-slate-900 ring-1 ring-slate-200 sm:p-10 print:ring-0">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-slate-800 pb-4">
         <div>
           <p className="text-2xl font-black">{oficina.nome}</p>
@@ -94,7 +94,7 @@ export function Documento({
           {cliente.endereco && <p className="text-sm">{cliente.endereco}</p>}
         </div>
         <div>
-          <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Veiculo</p>
+          <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Veículo</p>
           <p className="font-semibold">
             {placa(veiculo.placa)} - {veiculo.marca} {veiculo.modelo}
           </p>
@@ -131,7 +131,7 @@ export function Documento({
 
       {observacoes && (
         <section className="border-t border-slate-300 py-4">
-          <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Observacoes</p>
+          <p className="text-xs font-bold tracking-wide text-slate-500 uppercase">Observações</p>
           <p className="whitespace-pre-wrap">{observacoes}</p>
         </section>
       )}
@@ -146,7 +146,7 @@ export function Documento({
           Assinatura do cliente
         </div>
         <div className="border-t border-slate-400 pt-2 text-center text-sm">
-          Responsavel pela oficina
+          Responsável pela oficina
         </div>
       </section>
     </div>

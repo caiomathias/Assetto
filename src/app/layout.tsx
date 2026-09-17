@@ -3,9 +3,9 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Assetto - Gestao de oficina",
+  title: "Assetto - Gestão de oficina",
   description:
-    "Sistema simples para oficinas mecanicas: clientes, orcamentos, ordens de servico, patio, pecas, financeiro e CRM.",
+    "Sistema simples para oficinas mecânicas: clientes, orçamentos, ordens de serviço, pátio, peças, financeiro e CRM.",
 };
 
 export const viewport: Viewport = {

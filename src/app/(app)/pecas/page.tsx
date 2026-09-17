@@ -8,7 +8,7 @@ import { exigirSessao } from "@/lib/auth";
 import { moeda, quantidade as formatarQtd } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Pecas - Assetto" };
+export const metadata = { title: "Peças - Assetto" };
 
 export default async function PaginaPecas({
   searchParams,
@@ -46,12 +46,12 @@ export default async function PaginaPecas({
   return (
     <>
       <Cabecalho
-        titulo="Pecas"
-        descricao="Estoque, precos e alerta de reposicao."
+        titulo="Peças"
+        descricao="Estoque, preços e alerta de reposição."
         acao={
           <BotaoLink href="/pecas/nova">
             <Icone.mais className="h-5 w-5" />
-            Nova peca
+            Nova peça
           </BotaoLink>
         }
       />
@@ -61,7 +61,7 @@ export default async function PaginaPecas({
       {emFalta.length > 0 && (
         <div className="mb-5">
           <Aviso tom="amarelo">
-            <strong>{emFalta.length} peca(s) no estoque minimo ou abaixo:</strong>{" "}
+            <strong>{emFalta.length} peça(s) no estoque mínimo ou abaixo:</strong>{" "}
             {emFalta
               .slice(0, 6)
               .map((p) => p.nome)
@@ -72,7 +72,7 @@ export default async function PaginaPecas({
       )}
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-        <Busca acao="/pecas" valor={termo} placeholder="Nome, codigo ou marca" />
+        <Busca acao="/pecas" valor={termo} placeholder="Nome, código ou marca" />
         <p className="text-slate-600">
           Valor em estoque (custo):{" "}
           <strong className="text-slate-900">{moeda(valorEmEstoque)}</strong>
@@ -82,9 +82,9 @@ export default async function PaginaPecas({
       <Cartao>
         {pecas.length === 0 ? (
           <Vazio
-            titulo={termo ? "Nenhuma peca encontrada" : "Nenhuma peca cadastrada"}
-            descricao="Cadastre as pecas que a oficina costuma usar para agilizar os orcamentos."
-            acao={<BotaoLink href="/pecas/nova">Cadastrar peca</BotaoLink>}
+            titulo={termo ? "Nenhuma peça encontrada" : "Nenhuma peça cadastrada"}
+            descricao="Cadastre as peças que a oficina costuma usar para agilizar os orçamentos."
+            acao={<BotaoLink href="/pecas/nova">Cadastrar peça</BotaoLink>}
           />
         ) : (
           <ul className="divide-y divide-slate-200">
@@ -102,7 +102,7 @@ export default async function PaginaPecas({
                       <p className="text-lg font-semibold text-slate-900">{peca.nome}</p>
                       <p className="text-slate-600">
                         {[peca.codigo, peca.marca, peca.localizacao].filter(Boolean).join(" - ") ||
-                          "Sem codigo"}
+                          "Sem código"}
                       </p>
                     </div>
 

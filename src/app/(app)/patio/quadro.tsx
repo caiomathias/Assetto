@@ -34,14 +34,14 @@ const CORES_COLUNA: Record<string, string> = {
 };
 
 /**
- * Quadro do patio.
+ * Quadro do pátio.
  *
- * Arrastar e soltar funciona no computador, mas NAO e a unica forma de mover
- * a OS: cada cartao tem setas de avancar e voltar. Num tablet engordurado do
- * balcao, arrastar falha; o botao nao.
+ * Arrastar e soltar funciona no computador, mas NAO é a única forma de mover
+ * a OS: cada cartão tem setas de avançar e voltar. Num tablet engordurado do
+ * balcão, arrastar falha; o botão não.
  *
- * O cartao muda de coluna na tela antes da resposta do servidor (estado
- * otimista) para o quadro nao "piscar" a cada movimento.
+ * O cartão muda de coluna na tela antes da resposta do servidor (estado
+ * otimista) para o quadro não "piscar" a cada movimento.
  */
 export function QuadroPatio({ cartoes }: { cartoes: CartaoOS[] }) {
   const [otimista, setOtimista] = useState<Record<string, StatusOS>>({});
@@ -187,9 +187,9 @@ export function QuadroPatio({ cartoes }: { cartoes: CartaoOS[] }) {
                         type="button"
                         disabled={!proxima}
                         onClick={() => proxima && mover(cartao.id, proxima)}
-                        title={proxima ? `Avancar para ${STATUS_OS[proxima].titulo}` : undefined}
+                        title={proxima ? `Avançar para ${STATUS_OS[proxima].titulo}` : undefined}
                         className="flex min-h-9 flex-1 items-center justify-center rounded-md bg-marca-600 text-white hover:bg-marca-700 disabled:opacity-30"
-                        aria-label="Avancar etapa"
+                        aria-label="Avançar etapa"
                       >
                         <Icone.direita className="h-5 w-5" />
                       </button>

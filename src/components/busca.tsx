@@ -2,7 +2,7 @@ import { Icone } from "@/components/icones";
 
 /**
  * Busca por GET simples (sem JavaScript). Funciona no celular ruim do
- * balcao, mantem o termo na URL e o botao "voltar" do navegador faz o
+ * balcão, mantém o termo na URL é o botão "voltar" do navegador faz o
  * esperado.
  */
 export function Busca({

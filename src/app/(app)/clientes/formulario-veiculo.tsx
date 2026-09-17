@@ -20,7 +20,7 @@ export function FormularioVeiculo({
       {veiculo && <input type="hidden" name="id" value={veiculo.id} />}
 
       <Cartao>
-        <CartaoTitulo>Dados do veiculo</CartaoTitulo>
+        <CartaoTitulo>Dados do veículo</CartaoTitulo>
         <div className="grid gap-5 p-5 sm:grid-cols-6">
           <Campo rotulo="Placa" obrigatorio className="sm:col-span-2">
             <Entrada
@@ -42,7 +42,7 @@ export function FormularioVeiculo({
             <Entrada name="modelo" defaultValue={veiculo?.modelo} required placeholder="Argo 1.0" />
           </Campo>
 
-          <Campo rotulo="Ano de fabricacao" className="sm:col-span-2">
+          <Campo rotulo="Ano de fabricação" className="sm:col-span-2">
             <Entrada
               name="anoFabricacao"
               type="number"
@@ -69,7 +69,7 @@ export function FormularioVeiculo({
             <Entrada name="cor" defaultValue={veiculo?.cor ?? ""} placeholder="Prata" />
           </Campo>
 
-          <Campo rotulo="Combustivel" className="sm:col-span-2">
+          <Campo rotulo="Combustível" className="sm:col-span-2">
             <Selecao name="combustivel" defaultValue={veiculo?.combustivel ?? "FLEX"}>
               {Object.entries(COMBUSTIVEL).map(([valor, texto]) => (
                 <option key={valor} value={valor}>
@@ -102,8 +102,8 @@ export function FormularioVeiculo({
             <Entrada name="renavam" defaultValue={veiculo?.renavam ?? ""} inputMode="numeric" />
           </Campo>
           <Campo
-            rotulo="Observacoes"
-            ajuda="Ex: 'barulho na suspensao', 'cliente pediu para nao lavar'."
+            rotulo="Observações"
+            ajuda="Ex: 'barulho na suspensão', 'cliente pediu para não lavar'."
             className="sm:col-span-2"
           >
             <AreaTexto name="observacoes" defaultValue={veiculo?.observacoes ?? ""} />
@@ -112,7 +112,7 @@ export function FormularioVeiculo({
       </Cartao>
 
       <div className="flex flex-wrap gap-3">
-        <BotaoSalvar>{veiculo ? "Salvar alteracoes" : "Adicionar veiculo"}</BotaoSalvar>
+        <BotaoSalvar>{veiculo ? "Salvar alterações" : "Adicionar veículo"}</BotaoSalvar>
         <BotaoLink href={`/clientes/${clienteId}`} variante="secundario" tamanho="grande">
           Cancelar
         </BotaoLink>

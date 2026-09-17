@@ -90,8 +90,8 @@ export default async function PaginaPainel() {
       _sum: { valorCentavos: true },
       _count: true,
     }),
-    // O Prisma nao compara duas colunas da mesma tabela, entao o filtro de
-    // "abaixo do minimo" e feito em SQL puro.
+    // O Prisma não compara duas colunas da mesma tabela, então o filtro de
+    // "abaixo do mínimo" é feito em SQL puro.
     prisma.$queryRaw<{ id: string; nome: string; quantidade: number; unidade: string }[]>`
       SELECT id, nome, quantidade, unidade
       FROM "Peca"
@@ -126,12 +126,12 @@ export default async function PaginaPainel() {
   return (
     <>
       <Cabecalho
-        titulo={`Ola, ${primeiroNome}`}
+        titulo={`Olá, ${primeiroNome}`}
         descricao="Resumo de hoje na oficina."
         acao={
           <>
             <BotaoLink href="/orcamentos/novo" variante="secundario">
-              Novo orcamento
+              Novo orçamento
             </BotaoLink>
             <BotaoLink href="/os/nova">
               <Icone.mais className="h-5 w-5" />
@@ -149,16 +149,16 @@ export default async function PaginaPainel() {
           href="/patio"
         />
         <Numero
-          titulo="Orcamentos aguardando"
+          titulo="Orçamentos aguardando"
           valor={String(aguardandoAprovacao)}
           detalhe="Esperando resposta do cliente"
           href="/orcamentos?status=ENVIADO"
           tom="amarelo"
         />
         <Numero
-          titulo="Entrou este mes"
+          titulo="Entrou este mês"
           valor={moeda(entrou)}
-          detalhe={`Saiu ${moeda(saiu)} - saldo ${moeda(entrou - saiu)}`}
+          detalhe={`Saiu ${moeda(saiu)} · saldo ${moeda(entrou - saiu)}`}
           href="/financeiro"
           tom="verde"
         />
@@ -177,17 +177,17 @@ export default async function PaginaPainel() {
             <CartaoTitulo
               acao={
                 <BotaoLink href="/patio" variante="secundario" tamanho="pequeno">
-                  Ver patio
+                  Ver pátio
                 </BotaoLink>
               }
             >
-              Servicos em andamento
+              Serviços em andamento
             </CartaoTitulo>
 
             {ultimasOS.length === 0 ? (
               <Vazio
-                titulo="Nenhum servico em andamento"
-                descricao="Quando um carro entrar, abra a ordem de servico para ele aparecer aqui."
+                titulo="Nenhum serviço em andamento"
+                descricao="Quando um carro entrar, abra a ordem de serviço para ele aparecer aqui."
                 acao={<BotaoLink href="/os/nova">Abrir OS</BotaoLink>}
               />
             ) : (
@@ -255,11 +255,11 @@ export default async function PaginaPainel() {
             <CartaoTitulo
               acao={
                 <BotaoLink href="/pecas" variante="secundario" tamanho="pequeno">
-                  Ver pecas
+                  Ver peças
                 </BotaoLink>
               }
             >
-              Pecas para repor
+              Peças para repor
             </CartaoTitulo>
 
             {pecasEmFalta.length === 0 ? (

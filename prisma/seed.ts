@@ -1,8 +1,8 @@
 /**
- * Dados de demonstracao.
+ * Dados de demonstração.
  *
  * Serve para abrir o sistema e ver todas as telas cheias sem ter que digitar
- * nada. Roda com `npm run db:seed`. Nao usar em producao: a senha e conhecida.
+ * nada. Roda com `npm run db:seed`. Não usar em produção: a senha e conhecida.
  */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -30,7 +30,7 @@ async function main() {
   const existente = await prisma.usuario.findUnique({ where: { email: EMAIL_DEMO } });
   if (existente) {
     await prisma.oficina.delete({ where: { id: existente.oficinaId } });
-    console.log("Oficina de demonstracao anterior removida.");
+    console.log("Oficina de demonstração anterior removida.");
   }
 
   const oficina = await prisma.oficina.create({
@@ -43,7 +43,7 @@ async function main() {
       endereco: "Avenida Paulista",
       numero: "1000",
       bairro: "Bela Vista",
-      cidade: "Sao Paulo",
+      cidade: "São Paulo",
       uf: "SP",
       plano: "PROFISSIONAL",
     },
@@ -64,7 +64,7 @@ async function main() {
   const mecanico = await prisma.usuario.create({
     data: {
       oficinaId: oficina.id,
-      nome: "Jose Santos",
+      nome: "José Santos",
       email: "jose@autocentermodelo.com.br",
       senhaHash,
       papel: "MECANICO",
@@ -84,12 +84,12 @@ async function main() {
   // --- Catalogo -----------------------------------------------------------
 
   const servicosBase = [
-    { nome: "Troca de oleo e filtro", preco: 90, tempo: 30 },
+    { nome: "Troca de óleo e filtro", preco: 90, tempo: 30 },
     { nome: "Alinhamento e balanceamento", preco: 150, tempo: 60 },
     { nome: "Troca de pastilhas de freio", preco: 180, tempo: 60 },
-    { nome: "Revisao completa", preco: 450, tempo: 180 },
+    { nome: "Revisão completa", preco: 450, tempo: 180 },
     { nome: "Troca de correia dentada", preco: 600, tempo: 240 },
-    { nome: "Diagnostico eletronico (scanner)", preco: 120, tempo: 45 },
+    { nome: "Diagnóstico eletrônico (scanner)", preco: 120, tempo: 45 },
   ];
 
   const servicos = await Promise.all(
@@ -106,13 +106,13 @@ async function main() {
   );
 
   const pecasBase = [
-    { nome: "Oleo motor 5W30 sintetico", codigo: "OL-5W30", marca: "Mobil", unidade: "L", custo: 32, venda: 55, qtd: 24, min: 12 },
-    { nome: "Filtro de oleo", codigo: "FO-102", marca: "Tecfil", unidade: "UN", custo: 18, venda: 38, qtd: 15, min: 5 },
+    { nome: "Óleo motor 5W30 sintético", codigo: "OL-5W30", marca: "Mobil", unidade: "L", custo: 32, venda: 55, qtd: 24, min: 12 },
+    { nome: "Filtro de óleo", codigo: "FO-102", marca: "Tecfil", unidade: "UN", custo: 18, venda: 38, qtd: 15, min: 5 },
     { nome: "Filtro de ar", codigo: "FA-220", marca: "Tecfil", unidade: "UN", custo: 25, venda: 52, qtd: 8, min: 4 },
     { nome: "Pastilha de freio dianteira", codigo: "PF-330", marca: "Bosch", unidade: "JG", custo: 95, venda: 190, qtd: 6, min: 3 },
     { nome: "Disco de freio dianteiro", codigo: "DF-450", marca: "Fremax", unidade: "UN", custo: 120, venda: 240, qtd: 2, min: 4 },
     { nome: "Correia dentada", codigo: "CD-880", marca: "Gates", unidade: "UN", custo: 140, venda: 280, qtd: 3, min: 2 },
-    { nome: "Vela de ignicao", codigo: "VI-055", marca: "NGK", unidade: "UN", custo: 22, venda: 45, qtd: 20, min: 8 },
+    { nome: "Vela de ignição", codigo: "VI-055", marca: "NGK", unidade: "UN", custo: 22, venda: 45, qtd: 20, min: 8 },
     { nome: "Bateria 60Ah", codigo: "BT-60", marca: "Moura", unidade: "UN", custo: 380, venda: 620, qtd: 1, min: 2 },
   ];
 
@@ -152,7 +152,7 @@ async function main() {
   const acharPeca = (codigo: string) => pecas.find((p) => p.codigo === codigo)!;
   const acharServico = (inicio: string) => servicos.find((s) => s.nome.startsWith(inicio))!;
 
-  // --- Clientes e veiculos ------------------------------------------------
+  // --- Clientes e veículos ------------------------------------------------
 
   const clientesBase = [
     {
@@ -162,7 +162,7 @@ async function main() {
       veiculo: { placa: "ABC1D23", marca: "Fiat", modelo: "Argo 1.0", ano: 2021, cor: "Prata", km: 42000 },
     },
     {
-      nome: "Joao Pedro Almeida",
+      nome: "João Pedro Almeida",
       telefone: "11976543210",
       documento: "23456789012",
       veiculo: { placa: "DEF4G56", marca: "Volkswagen", modelo: "Gol 1.6", ano: 2018, cor: "Branco", km: 95000 },
@@ -187,7 +187,7 @@ async function main() {
       veiculo: { placa: "NOP3Q45", marca: "Toyota", modelo: "Corolla 2.0", ano: 2019, cor: "Cinza", km: 78000 },
     },
     {
-      nome: "Patricia Nunes",
+      nome: "Patrícia Nunes",
       telefone: "11943210987",
       documento: "56789012345",
       veiculo: { placa: "RST6U78", marca: "Honda", modelo: "Civic 2.0", ano: 2017, cor: "Azul", km: 112000 },
@@ -203,7 +203,7 @@ async function main() {
           telefone: c.telefone,
           documento: c.documento,
           tipoPessoa: c.tipoPessoa ?? "FISICA",
-          cidade: "Sao Paulo",
+          cidade: "São Paulo",
           uf: "SP",
         },
       });
@@ -226,12 +226,12 @@ async function main() {
     }),
   );
 
-  // --- Numeracao ----------------------------------------------------------
+  // --- Numeração ----------------------------------------------------------
 
   let proximoOrcamento = 0;
   let proximaOS = 0;
 
-  // --- Orcamentos ---------------------------------------------------------
+  // --- Orçamentos ---------------------------------------------------------
 
   type LinhaItem = {
     tipo: "PECA" | "SERVICO";
@@ -291,8 +291,8 @@ async function main() {
       enviadoEm: diasAtras(1),
       validadeAte: diasAFrente(6),
       kmAtual: 55000,
-      descricaoProblema: "Barulho de metal quando pisa no freio, principalmente de manha.",
-      observacoes: "Valor nao inclui troca do fluido de freio.",
+      descricaoProblema: "Barulho de metal quando pisa no freio, principalmente de manhã.",
+      observacoes: "Valor não inclui troca do fluido de freio.",
       totalCentavos: somar(orcamentoFreio),
       criadoPorId: dono.id,
       criadoEm: diasAtras(1),
@@ -339,21 +339,21 @@ async function main() {
   const orcamentoRevisao = montar([
     {
       tipo: "SERVICO",
-      descricao: "Revisao completa",
+      descricao: "Revisão completa",
       quantidade: 1,
       valor: 450,
-      servicoId: acharServico("Revisao completa").id,
+      servicoId: acharServico("Revisão completa").id,
     },
     {
       tipo: "PECA",
-      descricao: "Oleo motor 5W30 sintetico (OL-5W30)",
+      descricao: "Óleo motor 5W30 sintético (OL-5W30)",
       quantidade: 4,
       valor: 55,
       pecaId: acharPeca("OL-5W30").id,
     },
     {
       tipo: "PECA",
-      descricao: "Filtro de oleo (FO-102)",
+      descricao: "Filtro de óleo (FO-102)",
       quantidade: 1,
       valor: 38,
       pecaId: acharPeca("FO-102").id,
@@ -371,7 +371,7 @@ async function main() {
       respondidoEm: diasAtras(1),
       respondidoPor: "Roberto Mendes (pelo link)",
       validadeAte: diasAFrente(5),
-      descricaoProblema: "Revisao dos 80 mil km.",
+      descricaoProblema: "Revisão dos 80 mil km.",
       totalCentavos: somar(orcamentoRevisao),
       criadoPorId: dono.id,
       criadoEm: diasAtras(2),
@@ -379,26 +379,26 @@ async function main() {
     },
   });
 
-  // --- Ordens de servico --------------------------------------------------
+  // --- Ordens de serviço --------------------------------------------------
 
   const osTrocaOleo = montar([
     {
       tipo: "SERVICO",
-      descricao: "Troca de oleo e filtro",
+      descricao: "Troca de óleo e filtro",
       quantidade: 1,
       valor: 90,
-      servicoId: acharServico("Troca de oleo").id,
+      servicoId: acharServico("Troca de óleo").id,
     },
     {
       tipo: "PECA",
-      descricao: "Oleo motor 5W30 sintetico (OL-5W30)",
+      descricao: "Óleo motor 5W30 sintético (OL-5W30)",
       quantidade: 4,
       valor: 55,
       pecaId: acharPeca("OL-5W30").id,
     },
     {
       tipo: "PECA",
-      descricao: "Filtro de oleo (FO-102)",
+      descricao: "Filtro de óleo (FO-102)",
       quantidade: 1,
       valor: 38,
       pecaId: acharPeca("FO-102").id,
@@ -415,8 +415,8 @@ async function main() {
       responsavelId: mecanico.id,
       kmEntrada: 42000,
       previsaoEntrega: diasAFrente(1),
-      descricaoProblema: "Cliente pediu a troca de oleo da revisao.",
-      diagnostico: "Oleo escuro, filtro saturado. Demais itens em ordem.",
+      descricaoProblema: "Cliente pediu a troca de óleo da revisão.",
+      diagnostico: "Óleo escuro, filtro saturado. Demais itens em ordem.",
       totalCentavos: somar(osTrocaOleo),
       iniciadoEm: diasAtras(0),
       itens: { create: osTrocaOleo },
@@ -426,10 +426,10 @@ async function main() {
   const osEletrica = montar([
     {
       tipo: "SERVICO",
-      descricao: "Diagnostico eletronico (scanner)",
+      descricao: "Diagnóstico eletrônico (scanner)",
       quantidade: 1,
       valor: 120,
-      servicoId: acharServico("Diagnostico eletronico").id,
+      servicoId: acharServico("Diagnóstico eletrônico").id,
     },
     {
       tipo: "PECA",
@@ -450,8 +450,8 @@ async function main() {
       responsavelId: mecanico.id,
       kmEntrada: 95000,
       previsaoEntrega: diasAtras(1),
-      descricaoProblema: "Carro nao pega de manha.",
-      diagnostico: "Bateria sem carga e sem retencao. Alternador esta bom.",
+      descricaoProblema: "Carro não pega de manhã.",
+      diagnostico: "Bateria sem carga e sem retenção. Alternador está bom.",
       observacoes: "Aguardando chegar a bateria do fornecedor.",
       totalCentavos: somar(osEletrica),
       iniciadoEm: diasAtras(2),
@@ -494,21 +494,21 @@ async function main() {
       veiculoId: clientes[3].veiculo.id,
       status: "RECEBIDO",
       kmEntrada: 55000,
-      descricaoProblema: "Barulho no freio. Aguardando aprovacao do orcamento.",
+      descricaoProblema: "Barulho no freio. Aguardando aprovação do orçamento.",
       totalCentavos: 0,
       criadoEm: diasAtras(0),
       itens: { create: [] },
     },
   });
 
-  // OS ja faturada: gera receita no financeiro e saida de estoque.
+  // OS já faturada: gera receita no financeiro e saída de estoque.
   const osFaturada = montar([
     {
       tipo: "SERVICO",
-      descricao: "Revisao completa",
+      descricao: "Revisão completa",
       quantidade: 1,
       valor: 450,
-      servicoId: acharServico("Revisao completa").id,
+      servicoId: acharServico("Revisão completa").id,
     },
     {
       tipo: "PECA",
@@ -519,7 +519,7 @@ async function main() {
     },
     {
       tipo: "PECA",
-      descricao: "Vela de ignicao (VI-055)",
+      descricao: "Vela de ignição (VI-055)",
       quantidade: 4,
       valor: 45,
       pecaId: acharPeca("VI-055").id,
@@ -537,7 +537,7 @@ async function main() {
       status: "ENTREGUE",
       responsavelId: mecanico.id,
       kmEntrada: 112000,
-      descricaoProblema: "Revisao dos 110 mil km.",
+      descricaoProblema: "Revisão dos 110 mil km.",
       totalCentavos: totalFaturada,
       estoqueBaixado: true,
       iniciadoEm: diasAtras(12),
@@ -576,7 +576,7 @@ async function main() {
     data: {
       oficinaId: oficina.id,
       tipo: "RECEITA",
-      categoria: "Servico / OS",
+      categoria: "Serviço / OS",
       descricao: `OS ${String(ordemFaturada.numero).padStart(4, "0")}`,
       valorCentavos: totalFaturada,
       vencimento: diasAtras(11),
@@ -588,10 +588,10 @@ async function main() {
   });
 
   const despesas = [
-    { categoria: "Aluguel", descricao: "Aluguel do galpao", valor: 4500, dias: 10, pago: true },
-    { categoria: "Salarios", descricao: "Folha da equipe", valor: 9800, dias: 5, pago: true },
-    { categoria: "Agua / Luz / Internet", descricao: "Energia eletrica", valor: 890, dias: 3, pago: true },
-    { categoria: "Compra de pecas", descricao: "Pedido Auto Pecas Silva", valor: 2350, dias: -5, pago: false },
+    { categoria: "Aluguel", descricao: "Aluguel do galpão", valor: 4500, dias: 10, pago: true },
+    { categoria: "Salários", descricao: "Folha da equipe", valor: 9800, dias: 5, pago: true },
+    { categoria: "Água / Luz / Internet", descricao: "Energia elétrica", valor: 890, dias: 3, pago: true },
+    { categoria: "Compra de peças", descricao: "Pedido Auto Peças Silva", valor: 2350, dias: -5, pago: false },
     { categoria: "Impostos", descricao: "Simples Nacional", valor: 1250, dias: -12, pago: false },
   ];
 
@@ -614,8 +614,8 @@ async function main() {
     data: {
       oficinaId: oficina.id,
       tipo: "RECEITA",
-      categoria: "Venda de peca",
-      descricao: "Venda de oleo no balcao",
+      categoria: "Venda de peça",
+      descricao: "Venda de óleo no balcão",
       valorCentavos: reais(220),
       vencimento: diasAtras(4),
       pagoEm: diasAtras(4),
@@ -626,11 +626,11 @@ async function main() {
   // --- CRM ----------------------------------------------------------------
 
   const oportunidades = [
-    { nome: "Lucas Ferreira", telefone: "11991112222", origem: "Instagram", etapa: "NOVO" as const, valor: 800, contato: 0, obs: "Viu o post de suspensao, quer orcamento para Onix 2019." },
-    { nome: "Camila Rocha", telefone: "11992223333", origem: "Indicacao", etapa: "CONTATO_FEITO" as const, valor: 1500, contato: 1, obs: "Indicada pela Maria. Embreagem patinando." },
-    { nome: "Frota Rapida Entregas", telefone: "1133339999", origem: "Google", etapa: "NEGOCIACAO" as const, valor: 6800, contato: 2, obs: "Quer contrato de manutencao para 5 carros. Pediu desconto." },
-    { nome: "Patricia Nunes", telefone: "11943210987", origem: "Cliente antigo", etapa: "ORCAMENTO_ENVIADO" as const, valor: 880, contato: -1, obs: "Recusou a correia. Tentar de novo com parcelamento." },
-    { nome: "Diego Martins", telefone: "11994445555", origem: "Passou na frente", etapa: "GANHO" as const, valor: 450, contato: null, obs: "Fechou a revisao completa." },
+    { nome: "Lucas Ferreira", telefone: "11991112222", origem: "Instagram", etapa: "NOVO" as const, valor: 800, contato: 0, obs: "Viu o post de suspensão, quer orçamento para Onix 2019." },
+    { nome: "Camila Rocha", telefone: "11992223333", origem: "Indicação", etapa: "CONTATO_FEITO" as const, valor: 1500, contato: 1, obs: "Indicada pela Maria. Embreagem patinando." },
+    { nome: "Frota Rápida Entregas", telefone: "1133339999", origem: "Google", etapa: "NEGOCIACAO" as const, valor: 6800, contato: 2, obs: "Quer contrato de manutenção para 5 carros. Pediu desconto." },
+    { nome: "Patrícia Nunes", telefone: "11943210987", origem: "Cliente antigo", etapa: "ORCAMENTO_ENVIADO" as const, valor: 880, contato: -1, obs: "Recusou a correia. Tentar de novo com parcelamento." },
+    { nome: "Diego Martins", telefone: "11994445555", origem: "Passou na frente", etapa: "GANHO" as const, valor: 450, contato: null, obs: "Fechou a revisão completa." },
   ];
 
   for (const o of oportunidades) {
@@ -659,7 +659,7 @@ async function main() {
     ],
   });
 
-  console.log("\nDados de demonstracao criados.");
+  console.log("\nDados de demonstração criados.");
   console.log(`  Oficina: ${oficina.nome}`);
   console.log(`  Entrar com: ${EMAIL_DEMO}`);
   console.log(`  Senha:      ${SENHA_DEMO}\n`);

@@ -5,7 +5,7 @@ import { Cabecalho } from "@/components/ui";
 import { exigirSessao } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export const metadata = { title: "Novo veiculo - Assetto" };
+export const metadata = { title: "Novo veículo - Assetto" };
 
 export default async function PaginaNovoVeiculo({
   params,
@@ -20,7 +20,7 @@ export default async function PaginaNovoVeiculo({
 
   return (
     <>
-      <Cabecalho titulo="Adicionar veiculo" descricao={`Cliente: ${cliente.nome}`} />
+      <Cabecalho titulo="Adicionar veículo" descricao={`Cliente: ${cliente.nome}`} />
       <FormularioVeiculo clienteId={cliente.id} />
     </>
   );
