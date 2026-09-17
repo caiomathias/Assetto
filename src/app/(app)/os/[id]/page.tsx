@@ -70,7 +70,7 @@ export default async function PaginaOS({ params }: { params: Promise<{ id: strin
         </Selo>
         {faturada && <Selo tom="verde">Faturada</Selo>}
         {ordem.previsaoEntrega && (
-          <span className="text-slate-600">Previsao: {data(ordem.previsaoEntrega)}</span>
+          <span className="text-slate-600">Previsão: {data(ordem.previsaoEntrega)}</span>
         )}
       </div>
 

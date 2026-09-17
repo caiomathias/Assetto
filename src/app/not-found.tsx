@@ -6,7 +6,7 @@ export default function NaoEncontrado() {
       <p className="text-3xl font-black text-marca-700">Assetto</p>
       <h1 className="text-2xl font-bold text-slate-900">Página não encontrada</h1>
       <p className="max-w-md text-slate-600">
-        O endereco não existe, o registro foi apagado ou pertence a outra oficina.
+        O endereço não existe, o registro foi apagado ou pertence a outra oficina.
       </p>
       <Link
         href="/painel"

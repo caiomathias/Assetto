@@ -6,7 +6,7 @@ export const metadata = { title: "Novo cliente - Assetto" };
 export default function PaginaNovoCliente() {
   return (
     <>
-      <Cabecalho titulo="Novo cliente" descricao="Nome e telefone já bastam. O resto e opcional." />
+      <Cabecalho titulo="Novo cliente" descricao="Nome e telefone já bastam. O resto é opcional." />
       <FormularioCliente />
     </>
   );

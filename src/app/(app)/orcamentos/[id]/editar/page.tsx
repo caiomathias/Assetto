@@ -33,7 +33,7 @@ export default async function PaginaEditarOrcamento({
     <>
       <Cabecalho
         titulo={`Editar orçamento ${String(orcamento.numero).padStart(4, "0")}`}
-        descricao="Alterar itens mantem o mesmo número e o mesmo link do cliente."
+        descricao="Alterar itens mantém o mesmo número e o mesmo link do cliente."
       />
       <FormularioOrcamento
         clientes={clientes}

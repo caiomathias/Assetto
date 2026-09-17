@@ -112,7 +112,7 @@ export default async function PaginaConfiguracoes() {
                 </div>
 
                 <p className="text-sm text-slate-500">
-                  Esses dados aparecem no cabecalho dos orçamentos e das ordens de serviço
+                  Esses dados aparecem no cabeçalho dos orçamentos e das ordens de serviço
                   impressas.
                 </p>
 

@@ -25,7 +25,7 @@ export default async function PaginaNovoOrcamento({
         <Cartao>
           <Vazio
             titulo="Cadastre um cliente primeiro"
-            descricao="Todo orçamento e feito para um cliente e um veículo."
+            descricao="Todo orçamento é feito para um cliente e um veículo."
             acao={<BotaoLink href="/clientes/novo">Cadastrar cliente</BotaoLink>}
           />
         </Cartao>

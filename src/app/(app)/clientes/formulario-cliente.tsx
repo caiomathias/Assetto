@@ -47,7 +47,7 @@ export function FormularioCliente({ cliente }: { cliente?: Cliente }) {
       </Cartao>
 
       <Cartao>
-        <CartaoTitulo>Endereco</CartaoTitulo>
+        <CartaoTitulo>Endereço</CartaoTitulo>
         <div className="grid gap-5 p-5 sm:grid-cols-6">
           <Campo rotulo="CEP" className="sm:col-span-2">
             <EntradaCep name="cep" defaultValue={cliente?.cep} />

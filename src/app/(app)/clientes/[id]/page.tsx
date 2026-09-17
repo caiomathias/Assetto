@@ -250,7 +250,7 @@ export default async function PaginaCliente({
               <Linha rotulo="Telefone" valor={telefone(cliente.telefone)} />
               <Linha rotulo="E-mail" valor={cliente.email} />
               <Linha rotulo="CPF / CNPJ" valor={cliente.documento && documento(cliente.documento)} />
-              <Linha rotulo="Endereco" valor={enderecoCompleto} />
+              <Linha rotulo="Endereço" valor={enderecoCompleto} />
               <Linha rotulo="Cliente desde" valor={data(cliente.criadoEm)} />
             </dl>
             {zap.length >= 10 && (
