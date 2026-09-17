@@ -1,121 +1,109 @@
-# Publicar o Assetto para testar
+# Publicar o Assetto
 
-Este guia é para colocar o sistema no ar num endereço público, de graça, para
-você usar no computador e no celular. Não precisa saber programar e não precisa
-instalar nada na sua máquina.
+O sistema é publicado no **Netlify** (que você já usa) com o banco no
+**Supabase**. Este documento registra como está montado, o que já foi feito e o
+que ainda depende de você.
 
-**Leva uns 20 minutos.** No fim você terá um endereço como
-`https://assetto.vercel.app` que abre em qualquer lugar.
-
-> **Isto é um ambiente de teste, não de produção.** Serve para você validar o
-> produto e mostrar para oficinas. Antes de colocar cliente pagante dentro,
-> leia a seção "Antes de valer de verdade" no fim deste documento.
+> **Ambiente de teste, não de produção.** Serve para validar o produto e mostrar
+> para oficinas. Antes de colocar cliente pagante dentro, leia "Antes de valer
+> de verdade" no fim.
 
 ---
 
-## O que você vai precisar
+## O que já está pronto
 
-Duas contas gratuitas, além do GitHub que você já tem:
+| Item | Valor |
+| --- | --- |
+| Projeto Supabase | `assetto-sistema`, região São Paulo (`sa-east-1`) |
+| Site Netlify | `assetto-sistema` → <https://assetto-sistema.netlify.app> |
+| Custo | R$ 0/mês nas duas faixas gratuitas |
 
-| Serviço | Para que serve | Custo |
-| --- | --- | --- |
-| [Neon](https://neon.tech) | Guardar os dados (banco PostgreSQL) | Grátis |
-| [Vercel](https://vercel.com) | Rodar o sistema e dar o endereço | Grátis |
+Já configurado:
 
-Nos dois dá para entrar com a conta do GitHub, sem cartão de crédito.
+- Usuário de banco dedicado `assetto_app` (o sistema **não** usa o superusuário
+  `postgres`) e schema próprio `assetto`.
+- Variáveis `NEXT_PUBLIC_APP_URL` e `NODE_VERSION` no Netlify.
+- Acesso público liberado no site. O Netlify criou o site exigindo login da
+  equipe para visitar, o que bloquearia o link de aprovação que vai para o
+  cliente da oficina. Isso foi desligado.
+
+O site `assettoperformance.com` não foi tocado: o sistema ficou num site
+separado.
 
 ---
 
-## Passo 1 — Criar o banco de dados (Neon)
+## Por que schema separado
 
-1. Entre em <https://neon.tech> e crie a conta com o GitHub.
-2. Clique em **Create project**. Dê o nome `assetto`.
-3. Em região, escolha a mais perto do Brasil (`AWS South America (São Paulo)`
-   se aparecer; se não, `US East` serve).
-4. Terminando, o Neon mostra uma tela de **Connection string**. É um texto
-   longo que começa com `postgresql://`.
+Por padrão o Supabase publica uma API REST sobre o schema `public`. Como o
+sistema guarda CPF, telefone e endereço de clientes da oficina, as tabelas
+foram criadas num schema `assetto`, que essa API não expõe. É uma camada a
+menos de risco, de graça.
 
-**Atenção a este detalhe, é o único ponto onde dá para errar feio:**
+---
 
-O Neon oferece dois endereços. Um deles tem a palavra **`-pooler`** no meio.
-**Copie o que NÃO tem `-pooler`.** Costuma aparecer marcando a opção
-*Direct connection* ou desmarcando *Connection pooling*.
+## Por que a conexão é a do "Session pooler"
+
+O Supabase oferece três endereços de banco:
+
+| Endereço | Serve? |
+| --- | --- |
+| Conexão direta (`db.....supabase.co`) | **Não.** É só IPv6, e as funções do Netlify saem por IPv4. |
+| Session pooler (porta 5432) | **Sim.** IPv4, e mantém a sessão inteira numa conexão só. |
+| Transaction pooler (porta 6543) | Evitar por ora. Não suporta *prepared statements* e complica a transação do faturamento. |
+
+O faturamento de uma OS baixa estoque e lança o financeiro numa transação
+única. É a operação mais delicada do sistema, e a conexão de sessão é a que
+sustenta isso sem surpresa.
+
+**Atenção ao host:** ele tem um número (`aws-0`, `aws-1`...) que é índice de
+cluster, não a região. A documentação do Supabase diz explicitamente que não dá
+para deduzir e que o endereço precisa ser copiado do painel.
+
+---
+
+## O que falta (2 passos)
+
+### 1. Pegar o endereço do banco
+
+No painel do Supabase, projeto `assetto-sistema`:
+
+1. Clique em **Connect**, no topo da página.
+2. Escolha a aba **Session pooler**.
+3. Copie **só o trecho do host** — o pedaço entre a `@` e os dois-pontos, algo
+   como `aws-1-sa-east-1.pooler.supabase.com`.
+
+> Não precisa mandar a string inteira: ela contém a senha do usuário
+> `postgres`, e o sistema não usa esse usuário. O host basta.
+
+Com esse host, a variável `DATABASE_URL` do Netlify fica assim (a senha do
+`assetto_app` é gerada e guardada só no Netlify):
 
 ```
-✅ certo   postgresql://usuario:senha@ep-nome-123.sa-east-1.aws.neon.tech/neondb?sslmode=require
-❌ errado  postgresql://usuario:senha@ep-nome-123-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require
+postgresql://assetto_app.vvkwzqmjmqlydtfyopxt:SENHA@HOST:5432/postgres?schema=assetto&sslmode=require
 ```
 
-O motivo: o endereço com `pooler` divide a conexão entre vários acessos, e
-isso costuma dar problema justamente na operação mais delicada do sistema —
-faturar uma OS, que baixa o estoque e lança o financeiro de uma vez só. A
-conexão direta não tem esse risco e dá conta de sobra do volume de um teste.
+### 2. Ligar o repositório ao site
 
-Guarde esse texto, você vai colar daqui a pouco.
+No painel do Netlify, site `assetto-sistema`:
 
----
+1. **Project configuration → Build & deploy → Continuous deployment**
+2. **Link repository** → GitHub → escolha `caiomathias/Assetto`
+3. Branch: a principal do repositório (a que começa com `claude/`)
+4. O comando de build e a pasta já vêm do `netlify.toml` — não precisa mudar
+   nada
+5. **Deploy**
 
-## Passo 2 — Publicar o sistema (Vercel)
+A partir daí, todo push no GitHub gera um deploy novo sozinho.
 
-1. Entre em <https://vercel.com> e crie a conta com o GitHub.
-2. Clique em **Add New → Project**.
-3. Ache o repositório `Assetto` na lista e clique em **Import**.
-4. Na tela que abre, **não mude nada** em Framework, Build Command ou
-   Output Directory — a Vercel reconhece o projeto sozinho.
-
-   > O nome da branch é feio (`claude/workshop-management-system-...`), mas é
-   > a branch principal do repositório e a Vercel já a escolhe sozinha. Se um
-   > dia você renomear para `main`, lembre de atualizar a Production Branch em
-   > **Settings → Git**.
-5. Abra a seção **Environment Variables** e cadastre duas:
-
-   | Name | Value |
-   | --- | --- |
-   | `DATABASE_URL` | o endereço do Neon que você copiou (o **sem** `-pooler`) |
-   | `NEXT_PUBLIC_APP_URL` | deixe em branco por enquanto |
-
-6. Clique em **Deploy** e espere. Demora uns 2 minutos.
-
-Se der erro, quase sempre é o `DATABASE_URL` colado errado (faltando um pedaço
-ou com espaço no fim). Corrija em **Settings → Environment Variables** e clique
-em **Redeploy**.
-
----
-
-## Passo 3 — Apontar o endereço certo
-
-Terminado o deploy, a Vercel mostra o endereço do seu sistema, algo como
-`https://assetto-xxxx.vercel.app`.
-
-1. Vá em **Settings → Environment Variables**.
-2. Edite `NEXT_PUBLIC_APP_URL` e coloque esse endereço, **sem barra no fim**:
-   `https://assetto-xxxx.vercel.app`
-3. Vá na aba **Deployments**, clique nos três pontinhos do último e escolha
-   **Redeploy**.
-
-Isso é o que faz o link de aprovação de orçamento apontar para o endereço
-certo quando você mandar no WhatsApp.
-
----
-
-## Passo 4 — Criar sua oficina
-
-Abra o endereço e clique em **Cadastre sua oficina**.
-
-Use dados de verdade (nome, CNPJ, telefone, endereço): eles aparecem no
-cabeçalho dos orçamentos e das OS impressas, e é assim que você vê como o
-documento fica na mão do cliente.
-
-O banco começa vazio — sem os dados de demonstração. Isso é proposital: para
-avaliar o produto, é melhor cadastrar seus próprios clientes e sentir o
-trabalho real de uso.
+O primeiro build aplica as migrações e cria as tabelas. O banco começa vazio:
+abra o site e clique em **Cadastre sua oficina**.
 
 ---
 
 ## O que testar, na ordem
 
-Sugestão de roteiro. Faça no celular pelo menos uma vez, porque é onde a
-maioria dos problemas de usabilidade aparece.
+Faça no celular pelo menos uma vez — é onde os problemas de usabilidade
+aparecem.
 
 **O caminho principal, ponta a ponta:**
 
@@ -125,62 +113,53 @@ maioria dos problemas de usabilidade aparece.
 - [ ] Abrir o link **em outro celular** e aprovar como se fosse o cliente
 - [ ] Ver o orçamento virar OS e o carro aparecer no pátio
 - [ ] Mover o cartão no pátio até "Pronto"
-- [ ] Faturar a OS e conferir que a peça saiu do estoque e o valor entrou
-      no financeiro
+- [ ] Faturar a OS e conferir que a peça saiu do estoque e o valor entrou no
+      financeiro
 
-**Depois, as perguntas que importam mais que os botões:**
+**Depois, as perguntas que valem mais que os botões:**
 
-- [ ] Quanto tempo leva para fazer um orçamento completo? Se passar de 2
-      minutos, tem coisa para simplificar.
-- [ ] Um funcionário seu consegue usar sem você explicar? **Esse é o teste
-      mais valioso de todos.** Sente do lado, não fale nada e veja onde ele
-      trava.
+- [ ] Quanto tempo leva para fazer um orçamento completo? Passando de 2
+      minutos, tem o que simplificar.
+- [ ] Um funcionário seu consegue usar sem você explicar? **É o teste mais
+      valioso de todos.** Sente do lado, não fale nada, e veja onde ele trava.
 - [ ] A via impressa está boa para entregar ao cliente?
 - [ ] Faltou alguma informação que a oficina pede toda hora?
 
 Anote o que incomodar, mesmo que pareça bobagem. É disso que sai a próxima
-lista de trabalho — e vale mais que qualquer suposição minha.
+lista de trabalho.
 
 ---
 
 ## Perguntas comuns
 
-**Vai custar alguma coisa?** Não, nas faixas gratuitas dos dois serviços. O
-Neon hiberna o banco quando ninguém usa, então a primeira tela depois de
-algumas horas parada pode demorar uns segundos a mais. É normal.
+**Vai custar alguma coisa?** Não, nas faixas gratuitas. O Supabase pausa o
+projeto depois de uns dias sem uso; basta reativar pelo painel.
 
-**Posso usar meu próprio domínio?** Pode. Em **Settings → Domains** na Vercel
-você aponta algo como `sistema.suaoficina.com.br`. Lembre de atualizar o
-`NEXT_PUBLIC_APP_URL` depois e redeployar.
+**Posso usar meu próprio domínio?** Pode, em **Domain management** no Netlify.
+Depois atualize a variável `NEXT_PUBLIC_APP_URL` com o endereço novo e mande
+redeployar, senão o link de aprovação continua apontando para o endereço
+antigo.
 
-**E quando eu mudar o código?** Todo push para a branch publicada gera um
-deploy novo automaticamente.
-
-**Como coloco os dados de demonstração?** Dá, mas exige rodar um comando no
-terminal apontando para o banco do Neon. Se quiser, me peça que eu te passo a
-linha exata. Para avaliar o produto, cadastrar os próprios dados é melhor.
+**Como coloco os dados de demonstração?** Dá, mas exige rodar um comando
+apontando para o banco. Para avaliar o produto, cadastrar os próprios dados é
+melhor. Se quiser mesmo, me peça.
 
 ---
 
 ## Antes de valer de verdade
 
-Este ambiente é para teste. Antes de ter oficina pagante dentro, falta:
-
-1. **Backup do banco.** O Neon tem recuperação por tempo, mas na faixa gratuita
-   a janela é curta. Dado de cliente perdido não tem desculpa.
-2. **Trocar a senha de demonstração.** A conta `demo@assetto.com.br` tem senha
-   pública neste repositório. Se você rodar os dados de demonstração em
-   produção, apague a conta depois.
-3. **Decidir se o repositório continua público.** Hoje ele é público: qualquer
-   pessoa lê o código do seu produto. Para testar tudo bem, mas para um
-   produto de assinatura isso é uma decisão de negócio, não um detalhe. Em
-   **Settings → General → Change visibility**, no GitHub, dá para fechar — e a
-   Vercel continua funcionando com repositório privado.
-
-   O `.env` já está no `.gitignore`, então senha de banco não vai parar lá por
-   acidente. Ainda assim, com repositório público, nunca cole credencial em
-   nenhum arquivo do projeto.
-4. **Rever a conexão do banco.** A conexão direta que este guia usa é a certa
-   agora, mas tem limite de conexões simultâneas. Com dezenas de oficinas
-   usando ao mesmo tempo, isso precisa ser revisto.
-5. **Cobrança e bloqueio por falta de pagamento** — ver `docs/produto.md`.
+1. **Backup do banco.** Na faixa gratuita do Supabase a janela de recuperação é
+   curta. Dado de cliente perdido não tem desculpa.
+2. **Trocar a senha do banco**, já que ela foi gerada nesta conversa. Dá para
+   rodar `ALTER USER assetto_app WITH PASSWORD '...'` no SQL Editor do Supabase
+   e atualizar a variável no Netlify.
+3. **Decidir se o repositório continua público.** Hoje ele é: qualquer pessoa lê
+   o código do seu produto. Para testar tudo bem, mas para um produto de
+   assinatura é decisão de negócio. Fecha em **Settings → General → Change
+   visibility** no GitHub, e o Netlify continua funcionando.
+4. **Não rodar o seed em produção**: a conta `demo@assetto.com.br` tem senha
+   pública neste repositório.
+5. **Rever o pooler.** A conexão de sessão segura uma conexão por cliente. Com
+   dezenas de oficinas simultâneas isso precisa ser revisto — e quando mudar,
+   **testar o faturamento primeiro** (`npm run teste:fumaca` cobre esse caso).
+6. **Cobrança e bloqueio por falta de pagamento** — ver `docs/produto.md`.

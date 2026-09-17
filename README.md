@@ -106,9 +106,9 @@ sistema mal feito.
 
 ## Publicar para testar
 
-Para colocar o sistema no ar num endereço público e testar do celular, sem
-instalar nada, siga [`docs/publicar.md`](docs/publicar.md). Leva uns 20
-minutos e não custa nada.
+O sistema é publicado no Netlify com banco no Supabase, de graça. O que já
+está montado e o que falta fazer está em [`docs/publicar.md`](docs/publicar.md),
+junto com o roteiro do que testar.
 
 ## Documentação
 

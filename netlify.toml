@@ -1,0 +1,15 @@
+# Configuração de build no Netlify.
+#
+# O comando é o mesmo do desenvolvimento (`npm run build`), que roda
+# `prisma generate`, aplica as migrações pendentes e compila o Next. Por isso
+# o build precisa da variável DATABASE_URL, configurada no painel do Netlify.
+#
+# O runtime do Next.js é instalado pelo próprio Netlify ao detectar o projeto;
+# não precisa declarar plugin aqui.
+
+[build]
+  command = "npm run build"
+
+[build.environment]
+  # Mesma versão usada no desenvolvimento, para o build não variar sozinho.
+  NODE_VERSION = "22"
