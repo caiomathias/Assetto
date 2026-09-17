@@ -1,0 +1,139 @@
+# Assetto — arquitetura
+
+Documento para quem for mexer no código. As escolhas estão explicadas, não só
+listadas, para que dê para discordar com conhecimento de causa depois.
+
+## Tecnologia
+
+| Camada | Escolha | Por quê |
+| --- | --- | --- |
+| Framework | Next.js 15, App Router | Um projeto só para tela e servidor. Server Actions eliminam a camada de API para um CRUD deste tamanho. |
+| Linguagem | TypeScript, modo estrito | O compilador pega o erro antes do balcão. |
+| Banco | PostgreSQL com Prisma | Transação de verdade (necessária no faturamento), e o Prisma deixa o schema legível por quem não é do time. |
+| Estilo | Tailwind CSS 4 | Sem arquivo de estilo paralelo para manter. |
+| Sessão | Cookie httpOnly + token no banco | Dá para derrubar o acesso de alguém na hora, coisa que JWT sozinho não faz. |
+| Componentes | Próprios, em `src/components/ui` | Nove componentes. Uma biblioteca inteira seria peso morto e tiraria o controle do tamanho de alvo de toque. |
+
+Sem biblioteca de kanban: o arrastar-e-soltar usa a API nativa do navegador em
+umas 40 linhas. Uma dependência a menos para atualizar, e as setas de avançar
+e voltar cobrem quem não consegue arrastar.
+
+## Multi-inquilino
+
+**Toda tabela de negócio tem `oficinaId`, e nenhuma consulta roda sem ele.**
+
+O `oficinaId` sai sempre da sessão (`exigirSessao()`), nunca do formulário.
+Escritas usam `updateMany`/`deleteMany` com `oficinaId` no `where`: se alguém
+trocar o id no navegador, zero linhas são afetadas em vez de editar dado de
+outra oficina. Leituras usam `findFirst` com `oficinaId`, e o registro de outra
+oficina simplesmente não existe (404).
+
+Isso está coberto por teste: `testes/fumaca.mjs` cria uma segunda oficina e
+confirma que ela não abre a OS da primeira nem vê os clientes dela.
+
+É essa decisão que permite vender por assinatura sem reescrever nada. Se um dia
+um cliente grande exigir banco separado, o caminho é trocar a conexão por
+oficina — o código de consulta continua igual.
+
+## Regras que não podem ser quebradas
+
+**Dinheiro é `Int` em centavos.** Nunca `Float`, nunca `Decimal` na aplicação.
+`R$ 1.234,56` é `123456`. A conversão do que o usuário digita está em
+`paraCentavos()` e aceita `1.234,56`, `1234,56`, `1234.56` e `1234`.
+
+**Total é calculado no servidor.** O valor que veio do navegador é entrada, não
+verdade. `lerItens()` revalida tudo e recalcula os totais; o desconto nunca
+pode deixar o total negativo.
+
+**Faturar é uma transação só.** Baixa de estoque, movimento de auditoria,
+lançamento da receita e marcação da OS acontecem juntos ou não acontecem. A
+flag `estoqueBaixado` impede faturar duas vezes. Estoque errado e dinheiro
+lançado em dobro são os dois erros que fazem uma oficina abandonar o sistema.
+
+**Numeração de OS e orçamento vem de `Sequencia`**, com `increment` atômico
+dentro da mesma transação do registro. Duas pessoas salvando ao mesmo tempo
+nunca geram o mesmo número.
+
+**Nenhum erro técnico chega à tela.** `mensagemDeErro()` traduz os códigos do
+Prisma para português de gente. `P2002` vira "já existe um registro com esses
+dados".
+
+## Mapa do código
+
+```
+prisma/schema.prisma          modelo de dados, comentado
+prisma/seed.ts                oficina de demonstração completa
+
+src/lib/
+  auth.ts                     sessão, hash de senha, exigirSessao()
+  prisma.ts                   cliente do banco (com cache em desenvolvimento)
+  format.ts                   moeda, data, telefone, placa, documento
+  itens.ts                    validação e recálculo dos itens
+  sequencia.ts                numeração por oficina
+  rotulos.ts                  todo texto de enum que aparece na tela
+  consultas.ts                catálogo e clientes para os seletores
+  erros.ts                    Resultado padrão das actions
+
+src/components/               UI, formulários, kanban, editor de itens
+src/app/(auth)/               entrar e criar conta
+src/app/(app)/                sistema logado, um diretório por módulo
+src/app/orcamento/[token]/    página pública de aprovação (sem login)
+```
+
+Cada módulo em `src/app/(app)/` tem um `acoes.ts` com as Server Actions, e as
+páginas ao lado. Nomes em português porque o domínio é brasileiro: quem ler o
+código depois entende o negócio sem traduzir.
+
+## Padrões
+
+**Server Actions com estado.** Toda action de formulário tem a assinatura
+`(anterior, FormData) => Promise<Resultado>` e devolve `{ ok: false, erro }`
+em vez de lançar exceção. O componente `<Formulario>` mostra o erro, desabilita
+o botão enquanto salva e evita envio duplicado no clique nervoso.
+
+**Itens viajam como JSON.** O editor de itens é um componente de cliente com
+estado próprio; a lista vai para o servidor num campo escondido. O formulário
+continua sendo um `<form>` normal com Server Action, sem API paralela.
+
+**Kanban com estado otimista.** O cartão muda de coluna na tela antes da
+resposta do servidor, e o servidor volta a ser a verdade assim que responde.
+Sem isso o quadro pisca a cada movimento.
+
+**Cópia em vez de referência entre orçamento e OS.** Ao converter, os itens são
+copiados. Depois disso o orçamento é documento histórico e a OS segue a própria
+vida — o mecânico pode acrescentar peça sem alterar o que o cliente aprovou.
+
+## Segurança
+
+- Senhas com bcrypt (custo 10).
+- Sessão em cookie `httpOnly` + `sameSite=lax`, `secure` em produção, com
+  registro no banco e validade de 30 dias. Desativar um usuário derruba as
+  sessões abertas dele na hora.
+- Login não revela se o e-mail existe.
+- A página pública de aprovação roda sem sessão, então a action dela é
+  deliberadamente estreita: só muda o status de um orçamento que está em
+  `ENVIADO`, e nada mais. O token é um `cuid` de uso único por orçamento e a
+  página tem `robots: noindex`.
+
+## Antes de ir para produção
+
+1. Trocar `SESSION_SECRET` e as senhas do banco (`openssl rand -base64 32`).
+2. Definir `NEXT_PUBLIC_APP_URL` com o domínio real — é o que monta o link de
+   aprovação enviado ao cliente.
+3. Trocar `prisma db push` por `prisma migrate deploy`, para ter histórico de
+   migração.
+4. Não rodar o seed: a senha dele é pública.
+5. Configurar backup automático do PostgreSQL. É o ativo do cliente.
+6. Limpar sessões vencidas periodicamente (`Sessao.expiraEm < now()`).
+
+## Dívidas conhecidas
+
+- **Listas sem paginação.** Limitadas a 100–300 registros com busca. Acima de
+  alguns milhares de clientes, vai precisar de paginação de verdade.
+- **Seletor de cliente carrega todos os clientes** da oficina para o navegador.
+  Funciona bem até uns 2 mil; depois, trocar por busca no servidor.
+- **Assinatura não é cobrada.** `Oficina.plano` existe mas nada verifica.
+- **Sem histórico de alteração** (quem mudou o quê). Só o estoque tem extrato.
+- **Sem testes unitários.** A cobertura é o teste de fumaça de ponta a ponta,
+  que protege o caminho do dinheiro. Vale acrescentar testes de `paraCentavos`
+  e `lerItens`, que são onde um erro silencioso custa caro.

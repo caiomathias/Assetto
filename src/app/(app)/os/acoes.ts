@@ -1,0 +1,308 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { StatusOS, type Prisma } from "@prisma/client";
+import { z } from "zod";
+
+import { exigirSessao } from "@/lib/auth";
+import { falha, mensagemDeErro, type Resultado } from "@/lib/erros";
+import { dataDoInput } from "@/lib/format";
+import { aplicarDesconto, lerItens } from "@/lib/itens";
+import { prisma } from "@/lib/prisma";
+import { proximoNumero } from "@/lib/sequencia";
+
+function atualizarTelas(id?: string) {
+  revalidatePath("/patio");
+  revalidatePath("/os");
+  revalidatePath("/painel");
+  if (id) revalidatePath(`/os/${id}`);
+}
+
+const cabecalhoSchema = z.object({
+  clienteId: z.string().min(1, "Escolha o cliente."),
+  veiculoId: z.string().min(1, "Escolha o veiculo."),
+  responsavelId: z.string().optional(),
+  kmEntrada: z.string().optional(),
+  previsaoEntrega: z.string().optional(),
+  descricaoProblema: z.string().trim().optional(),
+  diagnostico: z.string().trim().optional(),
+  observacoes: z.string().trim().optional(),
+});
+
+export async function salvarOS(
+  _anterior: Resultado | null,
+  dados: FormData,
+): Promise<Resultado> {
+  const { oficinaId } = await exigirSessao();
+
+  const analise = cabecalhoSchema.safeParse({
+    clienteId: dados.get("clienteId"),
+    veiculoId: dados.get("veiculoId"),
+    responsavelId: dados.get("responsavelId")?.toString(),
+    kmEntrada: dados.get("kmEntrada")?.toString(),
+    previsaoEntrega: dados.get("previsaoEntrega")?.toString(),
+    descricaoProblema: dados.get("descricaoProblema")?.toString(),
+    diagnostico: dados.get("diagnostico")?.toString(),
+    observacoes: dados.get("observacoes")?.toString(),
+  });
+  if (!analise.success) return falha(analise.error.issues[0].message);
+
+  const leitura = lerItens(dados.get("itens"));
+  if (!leitura.ok) return falha(leitura.erro);
+
+  const { desconto, total } = aplicarDesconto(
+    leitura.subtotal,
+    Number(dados.get("descontoCentavos") ?? 0),
+  );
+
+  const { clienteId, veiculoId, responsavelId, ...resto } = analise.data;
+  const id = dados.get("id")?.toString() || null;
+
+  const veiculo = await prisma.veiculo.findFirst({
+    where: { id: veiculoId, oficinaId, clienteId },
+  });
+  if (!veiculo) return falha("Veiculo nao encontrado para este cliente.");
+
+  const km = resto.kmEntrada ? Number.parseInt(resto.kmEntrada, 10) : null;
+
+  const camposComuns = {
+    clienteId,
+    veiculoId,
+    responsavelId: responsavelId || null,
+    kmEntrada: Number.isFinite(km) ? km : null,
+    previsaoEntrega: dataDoInput(resto.previsaoEntrega),
+    descricaoProblema: resto.descricaoProblema || null,
+    diagnostico: resto.diagnostico || null,
+    observacoes: resto.observacoes || null,
+    descontoCentavos: desconto,
+    totalCentavos: total,
+  };
+
+  let ordemId: string;
+  try {
+    ordemId = await prisma.$transaction(async (tx) => {
+      if (id) {
+        const atual = await tx.ordemServico.findFirst({ where: { id, oficinaId } });
+        if (!atual) throw new Error("Ordem de servico nao encontrada.");
+        if (atual.estoqueBaixado) {
+          throw new Error(
+            "Esta OS ja foi faturada. Os itens nao podem mais mudar porque o estoque e o financeiro ja foram lancados.",
+          );
+        }
+
+        await tx.itemOS.deleteMany({ where: { ordemServicoId: id } });
+        await tx.ordemServico.update({
+          where: { id },
+          data: { ...camposComuns, itens: { create: leitura.itens } },
+        });
+        return id;
+      }
+
+      const numero = await proximoNumero(tx, oficinaId, "ORDEM_SERVICO");
+      const criada = await tx.ordemServico.create({
+        data: {
+          ...camposComuns,
+          oficinaId,
+          numero,
+          status: "RECEBIDO",
+          itens: { create: leitura.itens },
+        },
+      });
+      return criada.id;
+    });
+  } catch (e) {
+    return falha(mensagemDeErro(e));
+  }
+
+  atualizarTelas(ordemId);
+  redirect(`/os/${ordemId}`);
+}
+
+/**
+ * Move a OS de coluna no patio. Cada status carrega um carimbo de tempo,
+ * porque e disso que saem os indicadores de "quanto tempo o carro ficou aqui".
+ */
+export async function mudarStatus(dados: FormData): Promise<void> {
+  const { oficinaId } = await exigirSessao();
+  const id = dados.get("id")?.toString();
+  const novo = dados.get("status")?.toString();
+  const voltarPara = dados.get("voltarPara")?.toString();
+
+  if (!id || !novo || !(novo in StatusOS)) return;
+  const status = novo as StatusOS;
+
+  const ordem = await prisma.ordemServico.findFirst({ where: { id, oficinaId } });
+  if (!ordem) return;
+
+  const marcas: Prisma.OrdemServicoUpdateInput = { status };
+  if (status === "EM_EXECUCAO" && !ordem.iniciadoEm) marcas.iniciadoEm = new Date();
+  if (status === "PRONTO" && !ordem.finalizadoEm) marcas.finalizadoEm = new Date();
+  if (status === "ENTREGUE" && !ordem.entregueEm) marcas.entregueEm = new Date();
+
+  await prisma.ordemServico.update({ where: { id }, data: marcas });
+
+  atualizarTelas(id);
+  if (voltarPara) redirect(voltarPara);
+}
+
+const faturamentoSchema = z.object({
+  formaPagamento: z.enum([
+    "DINHEIRO",
+    "PIX",
+    "DEBITO",
+    "CREDITO",
+    "BOLETO",
+    "TRANSFERENCIA",
+    "OUTRO",
+  ]),
+  situacao: z.enum(["RECEBIDO", "A_RECEBER"]),
+  vencimento: z.string().optional(),
+});
+
+/**
+ * Fatura a OS. E o unico ponto do sistema onde tres coisas acontecem juntas,
+ * e por isso tudo roda numa transacao so:
+ *   1. baixa do estoque das pecas usadas, com movimento para auditoria;
+ *   2. lancamento da receita no financeiro;
+ *   3. marcacao da OS como faturada, para nao repetir.
+ *
+ * Se qualquer passo falhar, nenhum acontece. Estoque errado e dinheiro
+ * lancado em dobro sao os dois erros que destroem a confianca no sistema.
+ */
+export async function faturarOS(
+  _anterior: Resultado | null,
+  dados: FormData,
+): Promise<Resultado> {
+  const { oficinaId, usuarioId } = await exigirSessao();
+  const id = dados.get("id")?.toString();
+  if (!id) return falha("Ordem de servico nao informada.");
+
+  const analise = faturamentoSchema.safeParse({
+    formaPagamento: dados.get("formaPagamento"),
+    situacao: dados.get("situacao"),
+    vencimento: dados.get("vencimento")?.toString(),
+  });
+  if (!analise.success) return falha("Escolha a forma de pagamento.");
+
+  const recebido = analise.data.situacao === "RECEBIDO";
+  const vencimento = dataDoInput(analise.data.vencimento) ?? new Date();
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const ordem = await tx.ordemServico.findFirst({
+        where: { id, oficinaId },
+        include: { itens: true },
+      });
+      if (!ordem) throw new Error("Ordem de servico nao encontrada.");
+      if (ordem.estoqueBaixado) throw new Error("Esta OS ja foi faturada.");
+      if (ordem.status === "CANCELADO") throw new Error("OS cancelada nao pode ser faturada.");
+      if (ordem.itens.length === 0) throw new Error("Adicione itens antes de faturar.");
+
+      // Um item pode aparecer duas vezes (duas linhas da mesma peca).
+      // Somar antes evita dois updates concorrentes na mesma linha.
+      const porPeca = new Map<string, number>();
+      for (const item of ordem.itens) {
+        if (item.tipo !== "PECA" || !item.pecaId) continue;
+        porPeca.set(item.pecaId, (porPeca.get(item.pecaId) ?? 0) + item.quantidade);
+      }
+
+      for (const [pecaId, quantidade] of porPeca) {
+        const peca = await tx.peca.findFirst({ where: { id: pecaId, oficinaId } });
+        if (!peca) continue;
+
+        // Estoque negativo e permitido de proposito: a peca ja foi montada no
+        // carro. Bloquear aqui so faria a oficina parar de usar o sistema.
+        // O saldo negativo fica visivel na tela de pecas para ser acertado.
+        const saldo = Number((peca.quantidade - quantidade).toFixed(3));
+
+        await tx.peca.update({ where: { id: pecaId }, data: { quantidade: saldo } });
+        await tx.movimentoEstoque.create({
+          data: {
+            oficinaId,
+            pecaId,
+            tipo: "SAIDA",
+            quantidade,
+            saldoDepois: saldo,
+            motivo: `Uso na OS ${String(ordem.numero).padStart(4, "0")}`,
+            ordemServicoId: ordem.id,
+            usuarioId,
+          },
+        });
+      }
+
+      await tx.lancamento.create({
+        data: {
+          oficinaId,
+          tipo: "RECEITA",
+          categoria: "Servico / OS",
+          descricao: `OS ${String(ordem.numero).padStart(4, "0")}`,
+          valorCentavos: ordem.totalCentavos,
+          vencimento,
+          pagoEm: recebido ? new Date() : null,
+          formaPagamento: analise.data.formaPagamento,
+          ordemServicoId: ordem.id,
+          clienteId: ordem.clienteId,
+        },
+      });
+
+      await tx.ordemServico.update({
+        where: { id: ordem.id },
+        data: {
+          estoqueBaixado: true,
+          status: "ENTREGUE",
+          finalizadoEm: ordem.finalizadoEm ?? new Date(),
+          entregueEm: ordem.entregueEm ?? new Date(),
+        },
+      });
+    });
+  } catch (e) {
+    return falha(mensagemDeErro(e));
+  }
+
+  atualizarTelas(id);
+  revalidatePath("/financeiro");
+  revalidatePath("/pecas");
+  redirect(`/os/${id}`);
+}
+
+export async function excluirOS(dados: FormData): Promise<void> {
+  const { oficinaId } = await exigirSessao();
+  const id = dados.get("id")?.toString();
+  if (!id) return;
+
+  // OS faturada e documento contabil: cancela, nao apaga.
+  const ordem = await prisma.ordemServico.findFirst({ where: { id, oficinaId } });
+  if (!ordem) return;
+
+  if (ordem.estoqueBaixado) {
+    await prisma.ordemServico.update({ where: { id }, data: { status: "CANCELADO" } });
+    atualizarTelas(id);
+    redirect(`/os/${id}`);
+  }
+
+  await prisma.ordemServico.delete({ where: { id } });
+  atualizarTelas();
+  redirect("/os");
+}
+
+/**
+ * Versao chamada pelo arrastar-e-soltar do patio. Recebe argumentos simples
+ * em vez de FormData porque quem chama e JavaScript, nao um <form>.
+ */
+export async function moverOS(id: string, novoStatus: string): Promise<void> {
+  const { oficinaId } = await exigirSessao();
+  if (!(novoStatus in StatusOS)) return;
+  const status = novoStatus as StatusOS;
+
+  const ordem = await prisma.ordemServico.findFirst({ where: { id, oficinaId } });
+  if (!ordem || ordem.status === status) return;
+
+  const marcas: Prisma.OrdemServicoUpdateInput = { status };
+  if (status === "EM_EXECUCAO" && !ordem.iniciadoEm) marcas.iniciadoEm = new Date();
+  if (status === "PRONTO" && !ordem.finalizadoEm) marcas.finalizadoEm = new Date();
+  if (status === "ENTREGUE" && !ordem.entregueEm) marcas.entregueEm = new Date();
+
+  await prisma.ordemServico.update({ where: { id }, data: marcas });
+  atualizarTelas(id);
+}
