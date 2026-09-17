@@ -60,6 +60,14 @@ rotas, chaves de enum e classes CSS ficam em ASCII — acentuar um desses quebra
 o sistema em silêncio. `npm run teste:acentos` abre todas as telas e falha se
 encontrar palavra sem acento no texto visível.
 
+Só que teste de navegador não alcança o que a tela não mostrou. "cliente
+especifico" (só aparece acima de 200 clientes), "E-mail invalido", "não pode
+ser excluido" e "Este orcamento venceu" ficaram na base sem ninguém ver, porque
+são ramos que os dados de demonstração nunca acionam. Por isso existe também o
+`npm run teste:acentos-fonte`, que lê o código e olha texto de exibição — JSX e
+literal de string com cara de frase. Os dois se completam: um vê o que é
+renderizado, o outro vê o que está escrito.
+
 **Nenhum erro técnico chega à tela.** `mensagemDeErro()` traduz os códigos do
 Prisma para português de gente. `P2002` vira "já existe um registro com esses
 dados".

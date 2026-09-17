@@ -22,9 +22,9 @@ export const metadata = { title: "Cliente - Assetto" };
 
 const ERROS: Record<string, string> = {
   historico:
-    "Este cliente tem orçamentos ou ordens de serviço e não pode ser excluido. O histórico da oficina depende dele.",
+    "Este cliente tem orçamentos ou ordens de serviço e não pode ser excluído. O histórico da oficina depende dele.",
   "veiculo-historico":
-    "Este veículo tem ordens de serviço e não pode ser excluido. O histórico de manutenção depende dele.",
+    "Este veículo tem ordens de serviço e não pode ser excluído. O histórico de manutenção depende dele.",
 };
 
 function Linha({ rotulo, valor }: { rotulo: string; valor: React.ReactNode }) {

@@ -46,7 +46,7 @@ export default async function PaginaPeca({ params }: { params: Promise<{ id: str
         <div className="mb-5">
           <Aviso tom="vermelho">
             O estoque desta peça está negativo ({formatarQtd(peca.quantidade)} {peca.unidade}).
-            Isso acontece quando a peca foi usada numa OS sem ter sido dada entrada antes. Use
+            Isso acontece quando a peça foi usada numa OS sem ter sido dada entrada antes. Use
             &quot;Acertar pela contagem&quot; para corrigir.
           </Aviso>
         </div>

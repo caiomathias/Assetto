@@ -70,8 +70,10 @@ export default async function PaginaFinanceiro({
   const { mes, erro } = await searchParams;
   const periodo = faixaDoMes(mes);
 
+  // Conta que vence hoje ainda não está atrasada: o corte é a virada do dia,
+  // não o fim dele.
   const hoje = new Date();
-  hoje.setHours(23, 59, 59, 999);
+  hoje.setHours(0, 0, 0, 0);
 
   const [lancamentos, pendentes] = await Promise.all([
     prisma.lancamento.findMany({
@@ -80,7 +82,7 @@ export default async function PaginaFinanceiro({
       orderBy: [{ vencimento: "asc" }, { criadoEm: "asc" }],
     }),
     // Em aberto de qualquer mês: uma conta atrasada de janeiro precisa
-    // aparecer mesmo quando a tela está mostrando marco.
+    // aparecer mesmo quando a tela está mostrando março.
     prisma.lancamento.findMany({
       where: { oficinaId, pagoEm: null },
       select: { tipo: true, valorCentavos: true, vencimento: true },
@@ -94,7 +96,9 @@ export default async function PaginaFinanceiro({
   const pago = somar(lancamentos.filter((l) => l.tipo === "DESPESA" && l.pagoEm));
   const aReceber = somar(pendentes.filter((l) => l.tipo === "RECEITA"));
   const aPagar = somar(pendentes.filter((l) => l.tipo === "DESPESA"));
-  const vencidos = pendentes.filter((l) => l.vencimento < hoje);
+  // Só despesa: este número aparece no detalhe do "a pagar", e contar receita
+  // em aberto junto fazia a tela anunciar contas vencidas que não existiam.
+  const vencidos = pendentes.filter((l) => l.tipo === "DESPESA" && l.vencimento < hoje);
 
   return (
     <>
@@ -106,7 +110,7 @@ export default async function PaginaFinanceiro({
       {erro === "vinculado" && (
         <div className="mb-5">
           <Aviso tom="vermelho">
-            Este lancamento veio de uma OS faturada e não pode ser excluido aqui. Para desfazer,
+            Este lançamento veio de uma OS faturada e não pode ser excluído aqui. Para desfazer,
             cancele a ordem de serviço.
           </Aviso>
         </div>

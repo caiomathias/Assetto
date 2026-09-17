@@ -132,6 +132,13 @@ export default async function PaginaOrcamentos({
           </ul>
         )}
       </Cartao>
+
+      {orcamentos.length >= 100 && (
+        <p className="mt-4 text-center text-slate-600">
+          Mostrando os 100 mais recentes. Use a busca ou os filtros para achar um
+          orçamento antigo.
+        </p>
+      )}
     </>
   );
 }

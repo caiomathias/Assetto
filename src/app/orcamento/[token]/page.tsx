@@ -83,7 +83,7 @@ export default async function PaginaPublicaOrcamento({
         {vencido && (
           <div className="rounded-xl bg-amber-100 px-5 py-4 text-amber-900 ring-1 ring-amber-200">
             <p className="font-semibold">
-              Este orcamento venceu em {data(orcamento.validadeAte)}.
+              Este orçamento venceu em {data(orcamento.validadeAte)}.
             </p>
             <p>Você ainda pode aprovar, mas confirme os valores com a oficina antes.</p>
           </div>

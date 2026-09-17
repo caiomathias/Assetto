@@ -131,6 +131,13 @@ export default async function PaginaOrdens({
           </ul>
         )}
       </Cartao>
+
+      {ordens.length >= 100 && (
+        <p className="mt-4 text-center text-slate-600">
+          Mostrando as 100 mais recentes. Use a busca ou os filtros para achar uma
+          ordem antiga.
+        </p>
+      )}
     </>
   );
 }

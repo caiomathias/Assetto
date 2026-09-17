@@ -208,9 +208,17 @@ Depois atualize a variável `NEXT_PUBLIC_APP_URL` com o endereço novo e mande
 redeployar, senão o link de aprovação continua apontando para o endereço
 antigo.
 
-**Como coloco os dados de demonstração?** Dá, mas exige rodar um comando
-apontando para o banco. Para avaliar o produto, cadastrar os próprios dados é
-melhor. Se quiser mesmo, me peça.
+**Como coloco os dados de demonstração?** Já existe, no ambiente publicado,
+uma oficina fictícia cheia — "Auto Center Demonstração", com 320 clientes, 400
+veículos, 50 carros no pátio e 14 meses de histórico. Serve para ver as telas
+com volume de verdade e para mostrar o produto a uma oficina sem expor dado de
+ninguém.
+
+As credenciais dela **não ficam neste repositório**, que é público: quem tem
+acesso ao repositório teria acesso à conta. Peça que eu passe.
+
+O seed local (`npm run db:seed`) é outra coisa, e continua valendo só para a
+sua máquina — ver o aviso em "Antes de valer de verdade".
 
 ---
 

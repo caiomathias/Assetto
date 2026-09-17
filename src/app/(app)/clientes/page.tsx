@@ -110,7 +110,7 @@ export default async function PaginaClientes({
 
       {clientes.length >= 200 && (
         <p className="mt-4 text-center text-slate-600">
-          Mostrando os 200 primeiros. Use a busca para achar um cliente especifico.
+          Mostrando os 200 primeiros. Use a busca para achar um cliente específico.
         </p>
       )}
     </>

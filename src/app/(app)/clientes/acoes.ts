@@ -36,7 +36,7 @@ const clienteSchema = z.object({
     .trim()
     .transform((v) => (v === "" ? null : v.toLowerCase()))
     .nullable()
-    .refine((v) => v === null || z.string().email().safeParse(v).success, "E-mail invalido."),
+    .refine((v) => v === null || z.string().email().safeParse(v).success, "E-mail inválido."),
   cep: opcional,
   endereco: opcional,
   numero: opcional,

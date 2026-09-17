@@ -79,7 +79,7 @@ export async function criarUsuario(
   const analise = z
     .object({
       nome: z.string().trim().min(2, "Digite o nome."),
-      email: z.string().trim().toLowerCase().email("E-mail invalido."),
+      email: z.string().trim().toLowerCase().email("E-mail inválido."),
       senha: z.string().min(6, "A senha precisa ter pelo menos 6 caracteres."),
       papel: z.nativeEnum(Papel).catch(Papel.ATENDENTE),
     })
