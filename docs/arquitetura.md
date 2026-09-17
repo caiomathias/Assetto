@@ -172,6 +172,12 @@ aplicada.
   alguns milhares de clientes, vai precisar de paginação de verdade.
 - **Seletor de cliente carrega todos os clientes** da oficina para o navegador.
   Funciona bem até uns 2 mil; depois, trocar por busca no servidor.
+- **Conexão de banco em serverless é um equilíbrio frágil.** A conexão de
+  sessão com `connection_limit=1` resolve o caso de hoje (poucos usuários),
+  mas segura uma conexão por instância da função. Com dezenas de oficinas
+  simultâneas o limite volta a apertar, e a saída provável é o pooler em modo
+  transação — que exige revalidar a transação do faturamento antes, porque é
+  o ponto que depende de sessão.
 - **Assinatura não é cobrada.** `Oficina.plano` existe mas nada verifica. A
   única alavanca é `Oficina.ativa`, que bloqueia o login inteiro — brutal
   demais para usar como cobrança. Ver o plano em `docs/produto.md`.

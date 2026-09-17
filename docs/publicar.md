@@ -55,6 +55,33 @@ O faturamento de uma OS baixa estoque e lança o financeiro numa transação
 única. É a operação mais delicada do sistema, e a conexão de sessão é a que
 sustenta isso sem surpresa.
 
+### O parâmetro que não pode faltar: `connection_limit=1`
+
+A connection string termina com `&connection_limit=1&pool_timeout=20`. Sem
+isso o sistema derruba a si mesmo, e foi o que aconteceu na primeira vez:
+primeiro acesso funcionando, segundo devolvendo "Application error: a
+server-side exception has occurred".
+
+O motivo: o Prisma abre um *pool* de conexões por processo, e em hospedagem
+serverless cada instância da função é um processo novo. Com o padrão do
+Prisma, meia dúzia de instâncias já segurava 15 conexões ociosas e estourava o
+limite de clientes do pooler — aí a conexão seguinte é recusada e a página
+quebra.
+
+Com `connection_limit=1`, cada instância segura uma conexão só. O
+`pool_timeout=20` faz a requisição esperar por uma conexão livre em vez de
+falhar na hora.
+
+Se esse erro voltar, o diagnóstico é uma consulta:
+
+```sql
+select count(*) filter (where usename = 'assetto_app') as da_aplicacao,
+       count(*) filter (where state = 'idle') as ociosas
+  from pg_stat_activity;
+```
+
+Muitas conexões ociosas da aplicação = é isso de novo.
+
 **Atenção ao host:** ele tem um número (`aws-0`, `aws-1`...) que é índice de
 cluster, não a região. A documentação do Supabase diz explicitamente que não dá
 para deduzir e que o endereço precisa ser copiado do painel.
