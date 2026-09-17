@@ -1,0 +1,485 @@
+// Assetto - Sistema de gestao para oficinas mecanicas
+//
+// Convencoes deste schema:
+// - Multi-tenant: toda tabela de negocio tem `oficinaId`. Nenhuma consulta pode
+//   rodar sem esse filtro (ver src/lib/tenant.ts).
+// - Dinheiro: sempre Int em CENTAVOS. Nunca Float. Evita erro de arredondamento.
+// - Quantidade: Float. Valores reais de oficina (1, 2, 0.5, 3.5 litros) sao
+//   exatos em ponto flutuante e o total volta para Int via Math.round.
+// - Nomes em portugues: o dominio e brasileiro e quem le o codigo depois
+//   entende o negocio sem traduzir.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Tenant e acesso
+// ---------------------------------------------------------------------------
+
+model Oficina {
+  id       String   @id @default(cuid())
+  nome     String
+  cnpj     String?
+  telefone String?
+  email    String?
+  cep      String?
+  endereco String?
+  numero   String?
+  bairro   String?
+  cidade   String?
+  uf       String?
+  plano    Plano    @default(TESTE)
+  ativa    Boolean  @default(true)
+  criadoEm DateTime @default(now())
+
+  usuarios      Usuario[]
+  clientes      Cliente[]
+  veiculos      Veiculo[]
+  orcamentos    Orcamento[]
+  ordensServico OrdemServico[]
+  pecas         Peca[]
+  servicos      Servico[]
+  movimentos    MovimentoEstoque[]
+  lancamentos   Lancamento[]
+  oportunidades Oportunidade[]
+  sequencias    Sequencia[]
+}
+
+enum Plano {
+  TESTE
+  ESSENCIAL
+  PROFISSIONAL
+}
+
+model Usuario {
+  id        String   @id @default(cuid())
+  oficinaId String
+  nome      String
+  email     String   @unique
+  senhaHash String
+  papel     Papel    @default(ATENDENTE)
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now())
+
+  oficina       Oficina            @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  sessoes       Sessao[]
+  ordensServico OrdemServico[]     @relation("ResponsavelOS")
+  orcamentos    Orcamento[]        @relation("CriadorOrcamento")
+  movimentos    MovimentoEstoque[]
+  oportunidades Oportunidade[]     @relation("ResponsavelOportunidade")
+
+  @@index([oficinaId])
+}
+
+enum Papel {
+  DONO
+  GERENTE
+  ATENDENTE
+  MECANICO
+}
+
+model Sessao {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  usuarioId String
+  expiraEm  DateTime
+  criadoEm  DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+}
+
+/// Numeracao sequencial por oficina (OS 001, Orcamento 001...).
+model Sequencia {
+  id        String        @id @default(cuid())
+  oficinaId String
+  tipo      TipoSequencia
+  valor     Int           @default(0)
+
+  oficina Oficina @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+
+  @@unique([oficinaId, tipo])
+}
+
+enum TipoSequencia {
+  ORCAMENTO
+  ORDEM_SERVICO
+}
+
+// ---------------------------------------------------------------------------
+// Clientes e veiculos
+// ---------------------------------------------------------------------------
+
+model Cliente {
+  id           String     @id @default(cuid())
+  oficinaId    String
+  nome         String
+  tipoPessoa   TipoPessoa @default(FISICA)
+  documento    String?
+  telefone     String
+  email        String?
+  cep          String?
+  endereco     String?
+  numero       String?
+  complemento  String?
+  bairro       String?
+  cidade       String?
+  uf           String?
+  observacoes  String?
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
+
+  oficina       Oficina        @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  veiculos      Veiculo[]
+  orcamentos    Orcamento[]
+  ordensServico OrdemServico[]
+  lancamentos   Lancamento[]
+  oportunidades Oportunidade[]
+
+  @@index([oficinaId, nome])
+  @@index([oficinaId, telefone])
+}
+
+enum TipoPessoa {
+  FISICA
+  JURIDICA
+}
+
+model Veiculo {
+  id            String      @id @default(cuid())
+  oficinaId     String
+  clienteId     String
+  placa         String
+  marca         String
+  modelo        String
+  anoFabricacao Int?
+  anoModelo     Int?
+  cor           String?
+  combustivel   Combustivel @default(FLEX)
+  chassi        String?
+  renavam       String?
+  kmAtual       Int?
+  observacoes   String?
+  criadoEm      DateTime    @default(now())
+  atualizadoEm  DateTime    @updatedAt
+
+  oficina       Oficina        @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  cliente       Cliente        @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  orcamentos    Orcamento[]
+  ordensServico OrdemServico[]
+
+  @@unique([oficinaId, placa])
+  @@index([clienteId])
+}
+
+enum Combustivel {
+  FLEX
+  GASOLINA
+  ETANOL
+  DIESEL
+  GNV
+  ELETRICO
+  HIBRIDO
+}
+
+// ---------------------------------------------------------------------------
+// Orcamento
+// ---------------------------------------------------------------------------
+
+model Orcamento {
+  id                String          @id @default(cuid())
+  oficinaId         String
+  numero            Int
+  clienteId         String
+  veiculoId         String
+  status            StatusOrcamento @default(RASCUNHO)
+  /// Token do link publico que o cliente abre para aprovar pelo celular.
+  tokenPublico      String          @unique @default(cuid())
+  validadeAte       DateTime?
+  kmAtual           Int?
+  descricaoProblema String?
+  observacoes       String?
+  descontoCentavos  Int             @default(0)
+  totalCentavos     Int             @default(0)
+  enviadoEm         DateTime?
+  respondidoEm      DateTime?
+  respondidoPor     String?
+  respondidoIp      String?
+  motivoRecusa      String?
+  criadoPorId       String?
+  criadoEm          DateTime        @default(now())
+  atualizadoEm      DateTime        @updatedAt
+
+  oficina      Oficina         @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  cliente      Cliente         @relation(fields: [clienteId], references: [id])
+  veiculo      Veiculo         @relation(fields: [veiculoId], references: [id])
+  criadoPor    Usuario?        @relation("CriadorOrcamento", fields: [criadoPorId], references: [id])
+  itens        ItemOrcamento[]
+  ordemServico OrdemServico?
+
+  @@unique([oficinaId, numero])
+  @@index([oficinaId, status])
+}
+
+enum StatusOrcamento {
+  RASCUNHO
+  ENVIADO
+  APROVADO
+  RECUSADO
+  CONVERTIDO
+}
+
+model ItemOrcamento {
+  id                String   @id @default(cuid())
+  orcamentoId       String
+  tipo              TipoItem
+  pecaId            String?
+  servicoId         String?
+  descricao         String
+  quantidade        Float    @default(1)
+  valorUnitCentavos Int      @default(0)
+  totalCentavos     Int      @default(0)
+  ordem             Int      @default(0)
+
+  orcamento Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  peca      Peca?     @relation(fields: [pecaId], references: [id])
+  servico   Servico?  @relation(fields: [servicoId], references: [id])
+
+  @@index([orcamentoId])
+}
+
+enum TipoItem {
+  PECA
+  SERVICO
+}
+
+// ---------------------------------------------------------------------------
+// Ordem de servico e patio (kanban)
+// ---------------------------------------------------------------------------
+
+model OrdemServico {
+  id                String    @id @default(cuid())
+  oficinaId         String
+  numero            Int
+  orcamentoId       String?   @unique
+  clienteId         String
+  veiculoId         String
+  status            StatusOS  @default(RECEBIDO)
+  responsavelId     String?
+  kmEntrada         Int?
+  previsaoEntrega   DateTime?
+  descricaoProblema String?
+  diagnostico       String?
+  observacoes       String?
+  descontoCentavos  Int       @default(0)
+  totalCentavos     Int       @default(0)
+  /// Marca que o estoque ja foi baixado, para nao debitar duas vezes.
+  estoqueBaixado    Boolean   @default(false)
+  iniciadoEm        DateTime?
+  finalizadoEm      DateTime?
+  entregueEm        DateTime?
+  criadoEm          DateTime  @default(now())
+  atualizadoEm      DateTime  @updatedAt
+
+  oficina     Oficina            @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  cliente     Cliente            @relation(fields: [clienteId], references: [id])
+  veiculo     Veiculo            @relation(fields: [veiculoId], references: [id])
+  orcamento   Orcamento?         @relation(fields: [orcamentoId], references: [id])
+  responsavel Usuario?           @relation("ResponsavelOS", fields: [responsavelId], references: [id])
+  itens       ItemOS[]
+  movimentos  MovimentoEstoque[]
+  lancamentos Lancamento[]
+
+  @@unique([oficinaId, numero])
+  @@index([oficinaId, status])
+}
+
+/// Colunas do kanban do patio, nesta ordem.
+enum StatusOS {
+  RECEBIDO
+  AGUARDANDO_APROVACAO
+  EM_EXECUCAO
+  AGUARDANDO_PECA
+  PRONTO
+  ENTREGUE
+  CANCELADO
+}
+
+model ItemOS {
+  id                String   @id @default(cuid())
+  ordemServicoId    String
+  tipo              TipoItem
+  pecaId            String?
+  servicoId         String?
+  descricao         String
+  quantidade        Float    @default(1)
+  valorUnitCentavos Int      @default(0)
+  totalCentavos     Int      @default(0)
+  ordem             Int      @default(0)
+
+  ordemServico OrdemServico @relation(fields: [ordemServicoId], references: [id], onDelete: Cascade)
+  peca         Peca?        @relation(fields: [pecaId], references: [id])
+  servico      Servico?     @relation(fields: [servicoId], references: [id])
+
+  @@index([ordemServicoId])
+}
+
+// ---------------------------------------------------------------------------
+// Pecas e servicos
+// ---------------------------------------------------------------------------
+
+model Peca {
+  id                 String   @id @default(cuid())
+  oficinaId          String
+  codigo             String?
+  nome               String
+  marca              String?
+  unidade            String   @default("UN")
+  precoCustoCentavos Int      @default(0)
+  precoVendaCentavos Int      @default(0)
+  quantidade         Float    @default(0)
+  estoqueMinimo      Float    @default(0)
+  localizacao        String?
+  ativo              Boolean  @default(true)
+  criadoEm           DateTime @default(now())
+  atualizadoEm       DateTime @updatedAt
+
+  oficina        Oficina            @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  itensOrcamento ItemOrcamento[]
+  itensOS        ItemOS[]
+  movimentos     MovimentoEstoque[]
+
+  @@index([oficinaId, nome])
+}
+
+model Servico {
+  id               String   @id @default(cuid())
+  oficinaId        String
+  nome             String
+  descricao        String?
+  precoCentavos    Int      @default(0)
+  tempoEstimadoMin Int?
+  ativo            Boolean  @default(true)
+  criadoEm         DateTime @default(now())
+
+  oficina        Oficina         @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  itensOrcamento ItemOrcamento[]
+  itensOS        ItemOS[]
+
+  @@index([oficinaId, nome])
+}
+
+model MovimentoEstoque {
+  id             String        @id @default(cuid())
+  oficinaId      String
+  pecaId         String
+  tipo           TipoMovimento
+  quantidade     Float
+  /// Saldo da peca depois do movimento, para auditoria.
+  saldoDepois    Float
+  motivo         String?
+  ordemServicoId String?
+  usuarioId      String?
+  criadoEm       DateTime      @default(now())
+
+  oficina      Oficina       @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  peca         Peca          @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  ordemServico OrdemServico? @relation(fields: [ordemServicoId], references: [id])
+  usuario      Usuario?      @relation(fields: [usuarioId], references: [id])
+
+  @@index([oficinaId, pecaId])
+}
+
+enum TipoMovimento {
+  ENTRADA
+  SAIDA
+  AJUSTE
+}
+
+// ---------------------------------------------------------------------------
+// Financeiro
+// ---------------------------------------------------------------------------
+
+model Lancamento {
+  id             String          @id @default(cuid())
+  oficinaId      String
+  tipo           TipoLancamento
+  categoria      String
+  descricao      String
+  valorCentavos  Int
+  vencimento     DateTime
+  pagoEm         DateTime?
+  formaPagamento FormaPagamento?
+  ordemServicoId String?
+  clienteId      String?
+  observacoes    String?
+  criadoEm       DateTime        @default(now())
+
+  oficina      Oficina       @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  ordemServico OrdemServico? @relation(fields: [ordemServicoId], references: [id], onDelete: SetNull)
+  cliente      Cliente?      @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+
+  @@index([oficinaId, vencimento])
+  @@index([oficinaId, tipo])
+}
+
+enum TipoLancamento {
+  RECEITA
+  DESPESA
+}
+
+enum FormaPagamento {
+  DINHEIRO
+  PIX
+  DEBITO
+  CREDITO
+  BOLETO
+  TRANSFERENCIA
+  OUTRO
+}
+
+// ---------------------------------------------------------------------------
+// CRM
+// ---------------------------------------------------------------------------
+
+model Oportunidade {
+  id                    String    @id @default(cuid())
+  oficinaId             String
+  clienteId             String?
+  nomeContato           String
+  telefone              String?
+  origem                String?
+  etapa                 EtapaCrm  @default(NOVO)
+  valorEstimadoCentavos Int       @default(0)
+  proximoContatoEm      DateTime?
+  observacoes           String?
+  responsavelId         String?
+  ordem                 Int       @default(0)
+  motivoPerda           String?
+  fechadoEm             DateTime?
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @updatedAt
+
+  oficina     Oficina  @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+  cliente     Cliente? @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+  responsavel Usuario? @relation("ResponsavelOportunidade", fields: [responsavelId], references: [id])
+
+  @@index([oficinaId, etapa])
+}
+
+/// Colunas do kanban de CRM, nesta ordem.
+enum EtapaCrm {
+  NOVO
+  CONTATO_FEITO
+  ORCAMENTO_ENVIADO
+  NEGOCIACAO
+  GANHO
+  PERDIDO
+}

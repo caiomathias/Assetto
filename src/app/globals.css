@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/*
+  Assetto - base visual.
+  Regras de simplicidade que valem para todas as telas:
+  - Alvos de toque grandes (altura minima 44px em botoes e campos).
+  - Texto base 16px. Nada de cinza claro sobre branco.
+  - Cor com significado fixo: azul = acao, verde = dinheiro entrando / pronto,
+    vermelho = dinheiro saindo / problema, amarelo = esperando alguem.
+*/
+
+@theme {
+  --color-marca-50: #eff6ff;
+  --color-marca-100: #dbeafe;
+  --color-marca-200: #bfdbfe;
+  --color-marca-300: #93c5fd;
+  --color-marca-400: #60a5fa;
+  --color-marca-500: #3b82f6;
+  --color-marca-600: #2563eb;
+  --color-marca-700: #1d4ed8;
+  --color-marca-800: #1e40af;
+  --color-marca-900: #1e3a8a;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  --fundo: #f1f5f9;
+  --superficie: #ffffff;
+  --borda: #e2e8f0;
+  --texto: #0f172a;
+  --texto-suave: #475569;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Foco sempre visivel: muita gente usa Tab para andar no formulario. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-marca-500);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Tira as setinhas de input number - elas confundem e sao minusculas. */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media print {
+  .nao-imprimir {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    font-size: 12px;
+  }
+  .pagina-impressa {
+    max-width: none;
+    padding: 0;
+  }
+}
