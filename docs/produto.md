@@ -96,9 +96,43 @@ tela já sabe usar a outra.
 | Decisão | Escolha | Por quê |
 | --- | --- | --- |
 | Tipo de veículo | Carros e utilitários leves | Foco em oficina de bairro. Moto e caminhão exigem campos diferentes e entram depois. |
-| Nota fiscal | Fora da v1 | Exige gateway fiscal, certificado A1 por oficina e cadastro tributário. Atrasaria o lançamento em meses. O financeiro é controle interno. |
+| Nota fiscal | Fora da v1 | A integração em si é curta (2 a 3 semanas). O custo está no resto — ver "Sobre nota fiscal" abaixo. O financeiro é controle interno. |
 | Aprovação de orçamento | Link público por WhatsApp | Maior diferencial de venda do produto, e barato de construir. |
 | Peças | Estoque simples com baixa no faturamento | Cobre o que a oficina precisa. Compras e fornecedores entram quando houver demanda. |
+
+## Sobre nota fiscal
+
+Vale registrar por que ficou de fora, porque a razão não é "é difícil de
+programar". Integrar com um gateway fiscal (Focus NFe, NFE.io, PlugNotas) é
+chamada de API, webhook de status e os fluxos de cancelar e corrigir: duas a
+três semanas. O que custa caro é o que vem junto:
+
+- **Peça precisa de classificação fiscal.** NCM, origem e CST/CSOSN por item.
+  Uma oficina com 800 SKUs tem 800 itens para classificar, e quem sabe fazer
+  isso é o contador dela, não ela. Sem isso a nota é rejeitada.
+- **São dois documentos.** NFS-e para a mão de obra (ISS, municipal) e NF-e
+  modelo 55 para a peça (ICMS, estadual). Uma OS típica precisa dos dois;
+  resolver só um deixa o cliente indo no site da prefeitura do mesmo jeito.
+- **Certificado A1 por oficina.** Cada cliente compra o dele e nos entrega o
+  arquivo e a senha. A partir daí o sistema guarda chaves que assinam
+  documento fiscal em nome de terceiro, o que muda o patamar de segurança e
+  de responsabilidade. E vira barreira de ativação.
+- **A tela de configuração tributária briga com a premissa do produto.**
+  Regime, CNAE, inscrições, código de serviço, alíquota de ISS, retenção. É a
+  tela mais complexa do sistema inteiro, num produto cujo requisito é
+  funcionário menos instruído conseguir usar.
+- **Depois que emite, bug deixa de ser bug.** Vira problema fiscal do cliente,
+  e o suporte passa a exigir alguém que entenda do assunto.
+
+Um recorte bem menor sai em 3 a 4 semanas: só NFS-e, só Simples Nacional, só
+municípios no padrão nacional, com o gateway cuidando do certificado. Resolve
+a oficina que só precisa dar nota do serviço, e deixa a peça de fora — que é
+de onde vem quase toda a complexidade da lista acima.
+
+Na prática, a maioria das oficinas pequenas emite na mão no site da prefeitura
+e não trata isso como motivo para não comprar o software. Quem precisa de nota
+é a oficina que atende frota e PJ. Se esse for o cliente-alvo, nota fiscal
+vira requisito de venda e sobe na fila.
 
 ## O que ficou de fora, de propósito
 
@@ -119,4 +153,12 @@ Em ordem de retorno para o negócio:
    avisar o cliente sozinho — vira receita recorrente.
 4. **Fotos na OS.** Registrar o estado do carro na entrada evita discussão na
    entrega.
-5. **Emissão de NFS-e** via integração, quando houver clientes pedindo.
+5. **Exportação de pré-nota.** Planilha das OS faturadas para a oficina
+   importar no emissor de notas que ela já usa, e para o contador fechar o
+   mês. Não emite nada: só poupa a redigitação. Não exige certificado nem
+   configuração tributária, e o item da OS já vem separado entre peça e
+   serviço, que é a divisão entre os dois tipos de nota. Falta só um campo de
+   "código no sistema fiscal" em peça e serviço, para o arquivo casar com o
+   cadastro do outro programa. Estimativa de 2 a 3 dias.
+   **Decidido em 17/09/2026: fica para o fim da fila.**
+6. **Emissão de NFS-e** via integração, quando houver clientes pedindo.
