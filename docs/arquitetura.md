@@ -128,11 +128,31 @@ vida — o mecânico pode acrescentar peça sem alterar o que o cliente aprovou.
    bits guardado no banco, então não há nada para vazar num arquivo `.env`.
 2. Definir `NEXT_PUBLIC_APP_URL` com o domínio real — é o que monta o link de
    aprovação enviado ao cliente.
-3. Trocar `prisma db push` por `prisma migrate deploy`, para ter histórico de
-   migração.
-4. Não rodar o seed: a senha dele é pública.
-5. Configurar backup automático do PostgreSQL. É o ativo do cliente.
-6. Limpar sessões vencidas periodicamente (`Sessao.expiraEm < now()`).
+3. Não rodar o seed: a senha dele é pública.
+4. Configurar backup automático do PostgreSQL. É o ativo do cliente.
+5. Limpar sessões vencidas periodicamente (`Sessao.expiraEm < now()`).
+6. Rever a conexão do banco. O guia de publicação manda usar conexão direta,
+   não pooler: pooler em modo transação tem incompatibilidades conhecidas com
+   o Prisma (prepared statements, e transação interativa como a do
+   faturamento), e a conexão direta não tem nenhuma. Em troca, conexão direta
+   tem limite de conexões simultâneas. Com dezenas de oficinas isso precisa de
+   outra solução — pooler em modo sessão, ou Prisma Accelerate. **Quando
+   trocar, testar o faturamento primeiro**, que é a única operação que depende
+   de transação interativa: `npm run teste:fumaca` cobre esse caso.
+
+## Migrações
+
+O schema é versionado em `prisma/migrations`. `npm run build` roda
+`prisma migrate deploy` antes de compilar, então publicar já aplica o que
+estiver pendente — local e produção passam pelo mesmo caminho.
+
+`prisma db push` continua disponível (`npm run db:push`) para iterar schema
+rápido em desenvolvimento, mas o que vale é a migração versionada. Ao mudar o
+schema, gere a migração com `npm run db:migrate`.
+
+Numa hospedagem com deploy de preview por branch, atenção: o build de preview
+também roda `migrate deploy`. Com um banco só, a preview migra o banco de
+produção. Ao chegar nesse ponto, separar os bancos.
 
 ## Dívidas conhecidas
 
@@ -140,7 +160,9 @@ vida — o mecânico pode acrescentar peça sem alterar o que o cliente aprovou.
   alguns milhares de clientes, vai precisar de paginação de verdade.
 - **Seletor de cliente carrega todos os clientes** da oficina para o navegador.
   Funciona bem até uns 2 mil; depois, trocar por busca no servidor.
-- **Assinatura não é cobrada.** `Oficina.plano` existe mas nada verifica.
+- **Assinatura não é cobrada.** `Oficina.plano` existe mas nada verifica. A
+  única alavanca é `Oficina.ativa`, que bloqueia o login inteiro — brutal
+  demais para usar como cobrança. Ver o plano em `docs/produto.md`.
 - **Sem histórico de alteração** (quem mudou o quê). Só o estoque tem extrato.
 - **Sem testes unitários.** A cobertura são os dois testes de ponta a ponta
   (`teste:fumaca` e `teste:acentos`), que protegem o caminho do dinheiro e a

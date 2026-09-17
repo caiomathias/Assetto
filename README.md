@@ -104,8 +104,16 @@ sistema mal feito.
 
 ---
 
+## Publicar para testar
+
+Para colocar o sistema no ar num endereço público e testar do celular, sem
+instalar nada, siga [`docs/publicar.md`](docs/publicar.md). Leva uns 20
+minutos e não custa nada.
+
 ## Documentação
 
+- [`docs/publicar.md`](docs/publicar.md) — passo a passo para publicar e o
+  roteiro do que testar.
 - [`docs/produto.md`](docs/produto.md) — o que cada módulo faz, as decisões de
   negócio já tomadas e o que ficou de fora de propósito.
 - [`docs/arquitetura.md`](docs/arquitetura.md) — decisões técnicas, modelo de
