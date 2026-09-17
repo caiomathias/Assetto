@@ -99,6 +99,7 @@ tela já sabe usar a outra.
 | Nota fiscal | Fora da v1 | A integração em si é curta (2 a 3 semanas). O custo está no resto — ver "Sobre nota fiscal" abaixo. O financeiro é controle interno. |
 | Aprovação de orçamento | Link público por WhatsApp | Maior diferencial de venda do produto, e barato de construir. |
 | Peças | Estoque simples com baixa no faturamento | Cobre o que a oficina precisa. Compras e fornecedores entram quando houver demanda. |
+| Validação de CPF/CNPJ | **Não validar** | Decidido em 17/09/2026. O campo é opcional e a oficina muitas vezes atende sem ter o documento do cliente em mãos. Recusar número na hora do cadastro trava o atendimento por um dado que nem é obrigatório. O campo tem máscara, mas aceita o que for digitado — inclusive incompleto. Não reintroduzir sem decisão nova. |
 
 ## Sobre nota fiscal
 
