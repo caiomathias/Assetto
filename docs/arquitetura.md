@@ -154,6 +154,18 @@ Numa hospedagem com deploy de preview por branch, atenção: o build de preview
 também roda `migrate deploy`. Com um banco só, a preview migra o banco de
 produção. Ao chegar nesse ponto, separar os bancos.
 
+**Cuidado ao gerar migração nova:** `prisma migrate diff --from-empty` inclui
+um `CREATE SCHEMA IF NOT EXISTS "public"` no topo. Essa linha exige permissão
+no banco inteiro, não no schema, e quebra qualquer ambiente onde a aplicação
+roda com um papel restrito — foi o que derrubou a primeira publicação três
+vezes. O schema alvo vem da connection string (`?schema=`), então a linha é
+inútil: remova antes de commitar.
+
+Se precisar editar uma migração já aplicada, lembre que o Prisma guarda o
+sha256 do arquivo em `_prisma_migrations` e recusa rodar se não bater. Depois
+de editar, atualize a coluna `checksum` em todos os bancos onde ela já foi
+aplicada.
+
 ## Dívidas conhecidas
 
 - **Listas sem paginação.** Limitadas a 100–300 registros com busca. Acima de

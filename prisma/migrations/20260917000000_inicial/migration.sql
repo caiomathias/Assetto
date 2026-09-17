@@ -1,6 +1,3 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "public";
-
 -- CreateEnum
 CREATE TYPE "Plano" AS ENUM ('TESTE', 'ESSENCIAL', 'PROFISSIONAL');
 

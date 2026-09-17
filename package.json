@@ -17,7 +17,8 @@
     "teste:fumaca": "node testes/fumaca.mjs",
     "teste:acentos": "node testes/acentos.mjs",
     "db:deploy": "prisma migrate deploy",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "teste:producao": "node testes/producao.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

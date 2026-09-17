@@ -61,6 +61,47 @@ para deduzir e que o endereço precisa ser copiado do painel.
 
 ---
 
+## Permissões do banco
+
+O papel `assetto_app` precisa exatamente disto, e nada além:
+
+```sql
+GRANT USAGE, CREATE ON SCHEMA assetto TO assetto_app;
+```
+
+A aplicação cria as próprias tabelas pelas migrações, então já é dona delas —
+não precisa de GRANT tabela a tabela.
+
+**O que deu errado na primeira publicação:** a migração inicial começava com
+`CREATE SCHEMA IF NOT EXISTS "public"`, linha que o gerador do Prisma inclui
+por padrão. Criar schema exige permissão no **banco inteiro**, não no schema, e
+o build quebrou três vezes até isso ser contornado com
+`GRANT CREATE ON DATABASE postgres TO assetto_app`.
+
+Isso foi corrigido na origem: a linha saiu da migração (o schema alvo vem da
+connection string, e no Supabase nem é o `public`), e o privilégio de criar
+schema no banco foi revogado. Um ambiente novo agora sobe só com o GRANT
+acima.
+
+## Os dados estão isolados da API pública?
+
+Sim, e foi verificado, não presumido. Consultando as permissões reais no banco:
+
+| Papel | USAGE no schema `assetto` | Tabelas com grant | Lê `Cliente` |
+| --- | --- | --- | --- |
+| `anon` | não | 0 | não |
+| `authenticated` | não | 0 | não |
+| `service_role` | não | 0 | não |
+| `assetto_app` | sim | todas | sim |
+
+O advisor do Supabase acusa "RLS desabilitado" nas tabelas desse schema. No
+nosso caso é alarme falso: ele olha RLS sem olhar permissão, e esses papéis não
+alcançam o schema de jeito nenhum. Se um dia o schema `assetto` for adicionado
+aos schemas expostos pela API, aí sim isso vira problema — e a resposta seria
+RLS por `oficinaId`, não mexer nos grants.
+
+---
+
 ## O que falta (2 passos)
 
 ### 1. Pegar o endereço do banco

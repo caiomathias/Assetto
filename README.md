@@ -93,11 +93,16 @@ Instagram, quem prometeu voltar. O painel avisa com quem falar hoje.
 | `npm run typecheck` | Confere se o código tem erro de tipo |
 | `npm run teste:fumaca` | Testa o caminho completo num navegador de verdade |
 | `npm run teste:acentos` | Confere se sobrou texto sem acento em alguma tela |
+| `npm run teste:producao` | Roda o caminho do dinheiro contra o ambiente publicado |
 
 O teste de fumaça precisa do sistema já rodando (`npm start`) e de um Chromium
 instalado (`npx playwright install chromium`, ou aponte o caminho em
 `CHROME_EXECUTABLE`). Ele percorre o fluxo inteiro, do login ao faturamento, e
-confere que uma oficina não enxerga os dados da outra. O `teste:acentos` abre
+confere que uma oficina não enxerga os dados da outra. O `teste:producao` faz o
+mesmo contra o site publicado, criando a própria oficina de teste — serve para
+provar que o faturamento funciona através do pooler do banco, que é a parte
+mais arriscada da publicação. Ele deixa uma oficina de teste no banco, que
+precisa ser apagada depois. O `teste:acentos` abre
 todas as telas e procura palavras sem acento no texto visível — o produto é
 vendido para oficinas brasileiras, e texto sem acento passa impressão de
 sistema mal feito.
