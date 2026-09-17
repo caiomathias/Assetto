@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { FormularioOS } from "../../formulario-os";
 import { Cabecalho } from "@/components/ui";
 import { exigirSessao } from "@/lib/auth";
-import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
+import { carregarCatalogo, carregarClientesIniciais } from "@/lib/consultas";
 import { dataInput, moedaSimples } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -21,7 +21,7 @@ export default async function PaginaEditarOS({ params }: { params: Promise<{ id:
   if (ordem.estoqueBaixado) redirect(`/os/${id}`);
 
   const [clientes, catalogo, mecanicos] = await Promise.all([
-    carregarClientes(oficinaId),
+    carregarClientesIniciais(oficinaId, ordem.clienteId),
     carregarCatalogo(oficinaId),
     prisma.usuario.findMany({
       where: { oficinaId, ativo: true },

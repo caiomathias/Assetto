@@ -7,7 +7,9 @@ import { z } from "zod";
 import { exigirSessao } from "@/lib/auth";
 import { falha, mensagemDeErro, sucesso, type Resultado } from "@/lib/erros";
 import { soDigitos } from "@/lib/format";
+import { buscarClientesDaOficina } from "@/lib/consultas";
 import { prisma } from "@/lib/prisma";
+import type { ClienteResumo } from "@/components/seletor-cliente-veiculo";
 
 /** Campo de texto que, se vier vazio, deve virar null e não string vazia. */
 const opcional = z
@@ -214,4 +216,15 @@ export async function excluirVeiculo(dados: FormData): Promise<void> {
   await prisma.veiculo.deleteMany({ where: { id, oficinaId } });
   revalidatePath(`/clientes/${clienteId}`);
   redirect(`/clientes/${clienteId}`);
+}
+
+/**
+ * Busca usada pelo seletor de cliente enquanto a pessoa digita.
+ *
+ * Fica no servidor de propósito: mandar a base inteira para o navegador
+ * filtrar lá funcionava com seis clientes e virava megabytes com cinco mil.
+ */
+export async function buscarClientes(termo: string): Promise<ClienteResumo[]> {
+  const { oficinaId } = await exigirSessao();
+  return buscarClientesDaOficina(oficinaId, termo.slice(0, 80));
 }

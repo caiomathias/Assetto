@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
+import { buscarClientes } from "@/app/(app)/clientes/acoes";
 import { Icone } from "@/components/icones";
 import { Botao, Cartao, CartaoTitulo, cx } from "@/components/ui";
 import { placa as formatarPlaca, telefone as formatarTelefone } from "@/lib/format";
@@ -27,47 +28,53 @@ export type ClienteResumo = {
 /**
  * Escolha de cliente e veículo em duas etapas.
  *
- * Um <select> com 800 clientes e inútil no balcão. Aqui a pessoa digita
- * qualquer pedaço de nome, telefone ou placa e vê no máximo 8 resultados
- * em botões grandes. Depois escolhe o carro, que já vem filtrado pelo
- * cliente - assim não existe a combinação errada.
+ * Um <select> com 800 clientes é inútil no balcão. Aqui a pessoa digita
+ * qualquer pedaço de nome, telefone ou placa e vê no máximo 8 resultados em
+ * botões grandes. Depois escolhe o carro, que já vem filtrado pelo cliente —
+ * assim não existe a combinação errada.
+ *
+ * A busca é feita NO SERVIDOR. A versão anterior recebia a base inteira e
+ * filtrava no navegador: com 5 mil clientes a tela chegava a 1,2 MB, toda vez
+ * que abria. Agora chegam 8 registros e o resto é consulta.
  */
 export function SeletorClienteVeiculo({
-  clientes,
+  clientesIniciais,
   clienteInicialId,
   veiculoInicialId,
   bloqueado = false,
 }: {
-  clientes: ClienteResumo[];
+  clientesIniciais: ClienteResumo[];
   clienteInicialId?: string;
   veiculoInicialId?: string;
   bloqueado?: boolean;
 }) {
-  const [clienteId, setClienteId] = useState(clienteInicialId ?? "");
+  // O cliente escolhido é guardado inteiro, e não procurado na lista: a lista
+  // muda a cada busca, e quem já foi escolhido não pode sumir por causa disso.
+  const [cliente, setCliente] = useState<ClienteResumo | null>(
+    () => clientesIniciais.find((c) => c.id === clienteInicialId) ?? null,
+  );
   const [veiculoId, setVeiculoId] = useState(veiculoInicialId ?? "");
   const [busca, setBusca] = useState("");
+  const [resultados, setResultados] = useState<ClienteResumo[]>(clientesIniciais);
+  const [buscando, iniciarBusca] = useTransition();
 
-  const cliente = clientes.find((c) => c.id === clienteId) ?? null;
+  const clienteId = cliente?.id ?? "";
 
-  const resultados = useMemo(() => {
-    const termo = busca.trim().toLowerCase();
-    const limpo = termo.replace(/[^a-z0-9]/g, "");
-    const base = termo
-      ? clientes.filter(
-          (c) =>
-            c.nome.toLowerCase().includes(termo) ||
-            (limpo.length > 0 &&
-              (c.telefone.includes(limpo) ||
-                (c.documento ?? "").includes(limpo) ||
-                c.veiculos.some((v) => v.placa.toLowerCase().includes(limpo)))),
-        )
-      : clientes;
-    return base.slice(0, 8);
-  }, [busca, clientes]);
+  // Espera a pessoa parar de digitar antes de consultar: sem isso seria uma
+  // ida ao servidor por tecla.
+  useEffect(() => {
+    if (cliente) return;
+    const timer = setTimeout(() => {
+      iniciarBusca(async () => {
+        setResultados(await buscarClientes(busca));
+      });
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [busca, cliente]);
 
   function escolherCliente(escolhido: ClienteResumo) {
-    setClienteId(escolhido.id);
-    // Um carro so: escolhe sozinho. Evita um clique óbvio.
+    setCliente(escolhido);
+    // Um carro só: escolhe sozinho. Evita um clique óbvio.
     setVeiculoId(escolhido.veiculos.length === 1 ? escolhido.veiculos[0].id : "");
     setBusca("");
   }
@@ -82,7 +89,7 @@ export function SeletorClienteVeiculo({
         {!cliente ? (
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-slate-800">
-              Quem e o cliente? <span className="text-red-600">*</span>
+              Quem é o cliente? <span className="text-red-600">*</span>
             </label>
             <div className="relative">
               <Icone.busca className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-slate-400" />
@@ -98,7 +105,9 @@ export function SeletorClienteVeiculo({
             <div className="mt-3 space-y-2">
               {resultados.length === 0 ? (
                 <div className="rounded-lg bg-slate-50 px-4 py-6 text-center">
-                  <p className="text-slate-700">Nenhum cliente encontrado.</p>
+                  <p className="text-slate-700">
+                    {buscando ? "Procurando..." : "Nenhum cliente encontrado."}
+                  </p>
                   <Link
                     href="/clientes/novo"
                     className="mt-1 inline-block font-semibold text-marca-700 underline"
@@ -126,6 +135,13 @@ export function SeletorClienteVeiculo({
                   </button>
                 ))
               )}
+
+              {resultados.length >= 8 && (
+                <p className="px-1 pt-1 text-sm text-slate-500">
+                  Mostrando os 8 primeiros. Digite mais letras da placa ou do nome para
+                  afinar a busca.
+                </p>
+              )}
             </div>
           </div>
         ) : (
@@ -142,8 +158,9 @@ export function SeletorClienteVeiculo({
                   variante="secundario"
                   tamanho="pequeno"
                   onClick={() => {
-                    setClienteId("");
+                    setCliente(null);
                     setVeiculoId("");
+                    setResultados(clientesIniciais);
                   }}
                 >
                   Trocar cliente

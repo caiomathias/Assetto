@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { FormularioOrcamento } from "../../formulario-orcamento";
 import { Cabecalho } from "@/components/ui";
 import { exigirSessao } from "@/lib/auth";
-import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
+import { carregarCatalogo, carregarClientesIniciais } from "@/lib/consultas";
 import { dataInput, moedaSimples } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -25,7 +25,7 @@ export default async function PaginaEditarOrcamento({
   if (orcamento.status === "CONVERTIDO") redirect(`/orcamentos/${id}`);
 
   const [clientes, catalogo] = await Promise.all([
-    carregarClientes(oficinaId),
+    carregarClientesIniciais(oficinaId, orcamento.clienteId),
     carregarCatalogo(oficinaId),
   ]);
 

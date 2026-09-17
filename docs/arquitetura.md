@@ -170,8 +170,12 @@ aplicada.
 
 - **Listas sem paginação.** Limitadas a 100–300 registros com busca. Acima de
   alguns milhares de clientes, vai precisar de paginação de verdade.
-- **Seletor de cliente carrega todos os clientes** da oficina para o navegador.
-  Funciona bem até uns 2 mil; depois, trocar por busca no servidor.
+- ~~Seletor de cliente carrega todos os clientes~~ **resolvido em 17/09/2026.**
+  A tela de nova OS/orçamento mandava a base inteira para o navegador filtrar
+  lá. Medido antes de corrigir: 6 clientes = 41 KB, 500 = 154 KB, 2 mil =
+  496 KB, 5 mil = **1,2 MB** — a cada abertura da tela, no 4G do balcão. Agora
+  o servidor busca e devolve 8 resultados: 42 KB com os mesmos 5 mil
+  clientes, e constante daí para cima. Coberto por `npm run teste:busca`.
 - **Conexão de banco em serverless é um equilíbrio frágil.** A conexão de
   sessão com `connection_limit=1` resolve o caso de hoje (poucos usuários),
   mas segura uma conexão por instância da função. Com dezenas de oficinas

@@ -47,7 +47,7 @@ export function FormularioOS({
       {ordem && <input type="hidden" name="id" value={ordem.id} />}
 
       <SeletorClienteVeiculo
-        clientes={clientes}
+        clientesIniciais={clientes}
         clienteInicialId={ordem?.clienteId ?? clienteInicialId}
         veiculoInicialId={ordem?.veiculoId}
         bloqueado={Boolean(ordem)}

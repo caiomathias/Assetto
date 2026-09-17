@@ -1,7 +1,7 @@
 import { FormularioOS } from "../formulario-os";
 import { BotaoLink, Cabecalho, Cartao, Vazio } from "@/components/ui";
 import { exigirSessao } from "@/lib/auth";
-import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
+import { carregarCatalogo, carregarClientesIniciais } from "@/lib/consultas";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = { title: "Nova ordem de serviço - Assetto" };
@@ -15,7 +15,7 @@ export default async function PaginaNovaOS({
   const { cliente } = await searchParams;
 
   const [clientes, catalogo, mecanicos] = await Promise.all([
-    carregarClientes(oficinaId),
+    carregarClientesIniciais(oficinaId, cliente),
     carregarCatalogo(oficinaId),
     prisma.usuario.findMany({
       where: { oficinaId, ativo: true },

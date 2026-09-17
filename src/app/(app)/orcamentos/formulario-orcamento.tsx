@@ -39,7 +39,7 @@ export function FormularioOrcamento({
       {orcamento && <input type="hidden" name="id" value={orcamento.id} />}
 
       <SeletorClienteVeiculo
-        clientes={clientes}
+        clientesIniciais={clientes}
         clienteInicialId={orcamento?.clienteId ?? clienteInicialId}
         veiculoInicialId={orcamento?.veiculoId}
         bloqueado={Boolean(orcamento)}

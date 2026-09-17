@@ -19,7 +19,8 @@
     "db:deploy": "prisma migrate deploy",
     "postinstall": "prisma generate",
     "teste:producao": "node testes/producao.mjs",
-    "teste:mascaras": "node testes/mascaras.mjs"
+    "teste:mascaras": "node testes/mascaras.mjs",
+    "teste:busca": "node testes/busca-cliente.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -1,7 +1,7 @@
 import { FormularioOrcamento } from "../formulario-orcamento";
 import { BotaoLink, Cabecalho, Cartao, Vazio } from "@/components/ui";
 import { exigirSessao } from "@/lib/auth";
-import { carregarCatalogo, carregarClientes } from "@/lib/consultas";
+import { carregarCatalogo, carregarClientesIniciais } from "@/lib/consultas";
 
 export const metadata = { title: "Novo orçamento - Assetto" };
 
@@ -14,7 +14,7 @@ export default async function PaginaNovoOrcamento({
   const { cliente } = await searchParams;
 
   const [clientes, catalogo] = await Promise.all([
-    carregarClientes(oficinaId),
+    carregarClientesIniciais(oficinaId, cliente),
     carregarCatalogo(oficinaId),
   ]);
 
