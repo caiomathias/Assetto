@@ -20,7 +20,15 @@ const clienteSchema = z.object({
   nome: z.string().trim().min(2, "Digite o nome do cliente."),
   tipoPessoa: z.enum(["FISICA", "JURIDICA"]).default("FISICA"),
   documento: opcional,
-  telefone: z.string().trim().min(8, "Digite o telefone do cliente."),
+  // Contar dígitos, não caracteres: o campo agora chega com máscara, e
+  // "(11) 9" tem 6 caracteres mas só 3 dígitos.
+  telefone: z
+    .string()
+    .trim()
+    .refine(
+      (v) => soDigitos(v).length >= 10,
+      "Telefone incompleto. Precisa de DDD mais o número.",
+    ),
   email: z
     .string()
     .trim()

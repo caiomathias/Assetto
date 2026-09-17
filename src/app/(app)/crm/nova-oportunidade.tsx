@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { salvarOportunidade } from "./acoes";
 import { BotaoSalvar, Formulario } from "@/components/formulario";
+import { EntradaTelefone } from "@/components/campos-mascarados";
 import { AreaTexto, Botao, Campo, Cartao, CartaoTitulo, Entrada, Selecao } from "@/components/ui";
 import { ORIGENS_CRM } from "@/lib/rotulos";
 
@@ -42,7 +43,7 @@ export function NovaOportunidade() {
             </Campo>
 
             <Campo rotulo="Telefone / WhatsApp" className="sm:col-span-2">
-              <Entrada name="telefone" inputMode="tel" placeholder="11988887777" />
+              <EntradaTelefone name="telefone" />
             </Campo>
 
             <Campo rotulo="Como chegou até a oficina">

@@ -2,6 +2,11 @@ import type { Cliente } from "@prisma/client";
 
 import { salvarCliente } from "./acoes";
 import { BotaoSalvar, Formulario } from "@/components/formulario";
+import {
+  EntradaCep,
+  EntradaDocumento,
+  EntradaTelefone,
+} from "@/components/campos-mascarados";
 import { AreaTexto, BotaoLink, Campo, Cartao, CartaoTitulo, Entrada, Selecao } from "@/components/ui";
 import { TIPO_PESSOA } from "@/lib/rotulos";
 
@@ -28,17 +33,11 @@ export function FormularioCliente({ cliente }: { cliente?: Cliente }) {
           </Campo>
 
           <Campo rotulo="CPF ou CNPJ" ajuda="Pode deixar em branco.">
-            <Entrada name="documento" defaultValue={cliente?.documento ?? ""} inputMode="numeric" />
+            <EntradaDocumento name="documento" defaultValue={cliente?.documento} />
           </Campo>
 
-          <Campo rotulo="Telefone / WhatsApp" ajuda="Com DDD. Ex: 11988887777" obrigatorio>
-            <Entrada
-              name="telefone"
-              defaultValue={cliente?.telefone}
-              required
-              inputMode="tel"
-              placeholder="11988887777"
-            />
+          <Campo rotulo="Telefone / WhatsApp" ajuda="Com DDD." obrigatorio>
+            <EntradaTelefone name="telefone" defaultValue={cliente?.telefone} required />
           </Campo>
 
           <Campo rotulo="E-mail">
@@ -51,7 +50,7 @@ export function FormularioCliente({ cliente }: { cliente?: Cliente }) {
         <CartaoTitulo>Endereco</CartaoTitulo>
         <div className="grid gap-5 p-5 sm:grid-cols-6">
           <Campo rotulo="CEP" className="sm:col-span-2">
-            <Entrada name="cep" defaultValue={cliente?.cep ?? ""} inputMode="numeric" />
+            <EntradaCep name="cep" defaultValue={cliente?.cep} />
           </Campo>
           <Campo rotulo="Rua" className="sm:col-span-4">
             <Entrada name="endereco" defaultValue={cliente?.endereco ?? ""} />

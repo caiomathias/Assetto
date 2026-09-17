@@ -1,4 +1,9 @@
 import { alternarUsuario, criarUsuario, salvarOficina, trocarSenha } from "./acoes";
+import {
+  EntradaCep,
+  EntradaDocumento,
+  EntradaTelefone,
+} from "@/components/campos-mascarados";
 import { BotaoAcao, BotaoSalvar, Formulario } from "@/components/formulario";
 import {
   Aviso,
@@ -56,13 +61,16 @@ export default async function PaginaConfiguracoes() {
                     <Entrada name="nome" defaultValue={oficina.nome} required disabled={!gerente} />
                   </Campo>
                   <Campo rotulo="CNPJ" className="sm:col-span-2">
-                    <Entrada name="cnpj" defaultValue={oficina.cnpj ?? ""} disabled={!gerente} />
+                    <EntradaDocumento
+                      name="cnpj"
+                      defaultValue={oficina.cnpj}
+                      disabled={!gerente}
+                    />
                   </Campo>
                   <Campo rotulo="Telefone" className="sm:col-span-3">
-                    <Entrada
+                    <EntradaTelefone
                       name="telefone"
-                      defaultValue={oficina.telefone ?? ""}
-                      inputMode="tel"
+                      defaultValue={oficina.telefone}
                       disabled={!gerente}
                     />
                   </Campo>
@@ -75,7 +83,7 @@ export default async function PaginaConfiguracoes() {
                     />
                   </Campo>
                   <Campo rotulo="CEP" className="sm:col-span-2">
-                    <Entrada name="cep" defaultValue={oficina.cep ?? ""} disabled={!gerente} />
+                    <EntradaCep name="cep" defaultValue={oficina.cep} disabled={!gerente} />
                   </Campo>
                   <Campo rotulo="Rua" className="sm:col-span-3">
                     <Entrada

@@ -112,6 +112,50 @@ export function soDigitos(valor: string | null | undefined): string {
   return (valor ?? "").replace(/\D/g, "");
 }
 
+// ---------------------------------------------------------------------------
+// Máscaras progressivas
+//
+// As funções acima formatam um valor completo, para exibir. Estas formatam
+// valor pela metade, enquanto a pessoa ainda está digitando: com 3 dígitos o
+// telefone já mostra "(11) 9". É isso que evita o balconista ter que digitar
+// parêntese e traço na mão.
+//
+// O que vai para o banco continua sendo só dígito: as Server Actions passam
+// tudo por soDigitos().
+// ---------------------------------------------------------------------------
+
+/** "11988887777" -> "(11) 98888-7777", funcionando desde o primeiro dígito. */
+export function mascaraTelefone(valor: string): string {
+  const d = soDigitos(valor).slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  // Fixo tem 8 dígitos depois do DDD; celular tem 9.
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+/**
+ * Mesmo campo aceita CPF e CNPJ, então a máscara troca sozinha quando passa
+ * de 11 dígitos. Assim o atendente não precisa dizer ao sistema qual é qual.
+ */
+export function mascaraDocumento(valor: string): string {
+  const d = soDigitos(valor).slice(0, 14);
+  if (d.length <= 11) {
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+    if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+    return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+  }
+  if (d.length <= 12) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8)}`;
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`;
+}
+
+/** "01310100" -> "01310-100" */
+export function mascaraCep(valor: string): string {
+  const d = soDigitos(valor).slice(0, 8);
+  return d.length <= 5 ? d : `${d.slice(0, 5)}-${d.slice(5)}`;
+}
+
 export function iniciais(nome: string): string {
   const partes = nome.trim().split(/\s+/);
   if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();

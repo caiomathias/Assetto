@@ -93,6 +93,7 @@ Instagram, quem prometeu voltar. O painel avisa com quem falar hoje.
 | `npm run typecheck` | Confere se o código tem erro de tipo |
 | `npm run teste:fumaca` | Testa o caminho completo num navegador de verdade |
 | `npm run teste:acentos` | Confere se sobrou texto sem acento em alguma tela |
+| `npm run teste:mascaras` | Confere as máscaras de telefone, CPF/CNPJ e CEP |
 | `npm run teste:producao` | Roda o caminho do dinheiro contra o ambiente publicado |
 
 O teste de fumaça precisa do sistema já rodando (`npm start`) e de um Chromium
